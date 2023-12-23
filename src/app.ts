@@ -3,6 +3,7 @@ import { userRoutes } from './modules/user/user.routes'
 import { userSchemas } from './modules/user/user.schema'
 import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
+import { staticRoutes } from './modules/static/static.routes'
 
 const app = Fastify({ logger: true }) // you can disable logging
 
@@ -17,6 +18,7 @@ app.get('/healthcheck', (_, res) => {
   res.send({ message: 'Success' })
 })
 
+app.register(staticRoutes)
 app.register(userRoutes, { prefix: 'api/users' })
 
 for (let schema of [...userSchemas]) {
