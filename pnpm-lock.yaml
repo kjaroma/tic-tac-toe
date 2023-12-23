@@ -43,6 +43,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.10.4
     version: 20.10.4
+  '@types/ws':
+    specifier: ^8.5.10
+    version: 8.5.10
   jest:
     specifier: ^29.7.0
     version: 29.7.0(@types/node@20.10.4)
@@ -1098,6 +1101,12 @@ packages:
 
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
+    dev: true
+
+  /@types/ws@8.5.10:
+    resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
+    dependencies:
+      '@types/node': 20.10.4
     dev: true
 
   /@types/yargs-parser@21.0.3:

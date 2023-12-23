@@ -5,7 +5,7 @@ import path from 'path'
 
 export async function staticRoutes(app: FastifyInstance) {
   app.register(fastifyStatic, {
-    root: path.join(__dirname, 'public')
+    root: path.join(process.cwd(), 'public')
   })
   app.get('/', function(_, reply) {
     reply.sendFile('index.html')
