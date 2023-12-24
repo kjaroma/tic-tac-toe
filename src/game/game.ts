@@ -1,37 +1,45 @@
-const board = [["x", " ", "o"], ["x", "x", "o"], ["o", " ", "x"]]
+import BoardValidator from "./Validator"
+import { Board, BoardValue, IBoardValidator } from "./types"
 
+class Game {
+  private board: Board = []
+  private boardSize = 0
+  private winner: BoardValue | undefined
+  private validator: IBoardValidator 
 
-function validateBoardSize(board: string[][]) {
-  return board.every(row => row.length === board.length)
-}
-
-const transposeArray = (array: string[][]): string[][] => array[0]
-  .map((_, colIndex) => array.map(row => row[colIndex]));
-
-const getRowResult = (row: string[]): boolean | string => {
-  const set = row.map(row => (new Set(row).size === 1)).filter(Boolean)
-  const value = set.values().next().value
-  return value === ' ' ? false : value
-}
-
-function validateBoard(board: string[][]) {
-  const rowWin = board.map(row => (new Set(row).size === 1)).filter(Boolean)
-  if (rowWin) {
-    return true
+  constructor(boardSize = 3) {
+    this.boardSize = boardSize
+    this.createBoard(boardSize)
+    this.validator = new BoardValidator(boardSize)
   }
-  const columns = transposeArray(board)
-  const colWin = board.some(row => (new Set(row).size === 1))
-  if (colWin) {
-    return true
+
+  private createBoard(boardSize: number) {
+    this.board = Array.from({ length: boardSize }, () => Array.from({ length: boardSize }, () => null))
   }
-  const topBottomDiagonal = board.map((row, idx) => row[idx])
-  const bottomTopDiagonal = board.map((row, idx) => row[board.length - idx - 1])
-  console.log(topBottomDiagonal, bottomTopDiagonal)
-  // Looks ok, but who won, return player1, player2 or tie?
-  return false
+
+  public setMove(col: number, row: number, value: BoardValue) {
+    if (col > this.boardSize - 1 || row > this.boardSize - 1) {
+      // Illegal move for this board size
+      return
+    }
+    if (this.board[col][row] !== null) {
+      // Board cell already used
+      return
+    }
+    this.board[col][row] = value
+    this.validateBoard();
+  }
+
+  private validateBoard() {
+    const winner = this.validator.validate(this.board)
+    if(winner !== null) {
+      this.winner = winner
+    }
+  }
+
+  public printBoard() {
+    console.log(JSON.stringify(this.board, null, 2))
+  }
 }
 
-console.log(board.join("\n"), "\n", transposeArray(board).join("\n"))
-
-console.log(validateBoard(board), board, transposeArray(board))
-
+export default Game

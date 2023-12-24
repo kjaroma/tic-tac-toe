@@ -1,9 +1,9 @@
 import fastifyWebsocket, { SocketStream } from "@fastify/websocket";
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 
 export async function gameRoutes(app: FastifyInstance) {
     await app.register(fastifyWebsocket)
-    app.get('/', {websocket: true}, (conn: SocketStream, req: FastifyRequest) => {
+    app.get('/', {websocket: true}, (conn: SocketStream) => {
         conn.socket.on('open', () => {
             conn.socket.send('[SERVER] Connected to websocket\n')
         })
