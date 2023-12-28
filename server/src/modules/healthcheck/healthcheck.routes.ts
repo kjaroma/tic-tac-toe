@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { healthcheck } from "./healthcheck.controller";
-import { $ref } from "./healthcheck.schema";
+import { $ref } from "../../utils/server/loadSchemas";
 
 export async function healthcheckRoutes(app: FastifyInstance) {
     app.get('/', {

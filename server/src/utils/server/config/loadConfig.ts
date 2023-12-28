@@ -1,24 +1,9 @@
 import { FastifyInstance } from 'fastify';
-import z from "zod";
 import { fastifyEnv } from '@fastify/env'
-import { buildJsonSchemas } from 'fastify-zod';
-import { isDevEnv } from '../env';
-
-const appConfigSchema = z.object({
-    DATABASE_URL: z.string(),
-    JWT_SECRET: z.string(),
-    JWT_ISSUER: z.string(),
-    JWT_TTL_SECS: z.number(),
-})
-
-export const appConfigSchemas = {
-    appConfigSchema
-}
-
-export type AppConfigType = z.infer<typeof appConfigSchema>
+import { isDevEnv } from '../../env';
+import { $ref } from '../loadSchemas';
 
 // TODO Convert zod schema
-// ADD database
 const appConfigJsonSchema = {
     "type": "object",
     "properties": {
