@@ -3,10 +3,6 @@ import { $ref } from './user.schema'
 import { createUser } from './user.controller'
 
 export async function userRoutes(app: FastifyInstance) {
-  app.get('/', (_, reply: FastifyReply) => {
-    reply.send({ message: '/ route hit' })
-  })
-
   app.post(
     '/register',
     {
