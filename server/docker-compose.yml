@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  api:
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    restart: always
+    networks:
+      - app
+    env_file:
+      - ./postgres.env
+
+networks:
+  app:
+    name: app
+    driver: bridge
