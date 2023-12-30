@@ -29,7 +29,5 @@ export async function userRoutes(app: FastifyInstance) {
     loginUser,
   )
 
-  app.delete('/logout', logoutUser)
-
-  app.log.info('user routes registered')
-  }
+  app.delete('/logout', { preHandler: [app.authenticate] }, logoutUser)
+}

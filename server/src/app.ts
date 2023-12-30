@@ -8,6 +8,7 @@ import { loadSchemas } from './utils/server/loadSchemas';
 import { loadConfig } from './utils/server/config/loadConfig';
 import { userRoutes } from "./modules/user/user.routes";
 import { authHandler } from "./utils/server/authHandler";
+import { gameRoutes } from "./modules/game/game.routes";
 
 export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance> => {
   const app: FastifyInstance = Fastify(opts);
@@ -21,15 +22,12 @@ export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance>
   app.decorate('authenticate', authHandler)
 
   app.register(userRoutes, { prefix: "api/users" });
+  app.register(gameRoutes, {prefix: 'api/games'});
 
-  // #############################
-  
   app.addHook("preHandler", (req: FastifyRequest, _, done) => {
     req.jwt = app.jwt;
     done();
   });
-
-  // #############################
 
   app.register(fastifyCookie, {
     secret: app.config.COOKIE_SIGN_SECRET,

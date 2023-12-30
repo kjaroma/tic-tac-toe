@@ -6,7 +6,9 @@ declare module 'fastify' {
     jwt: JWT,
   }
   interface FastifyInstance {
-    config: AppConfigType
+    config: AppConfigType,
+    // TODO add more specific type
+    authenticate: any,
   }
 }
 
