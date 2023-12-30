@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { CreateUserInput, LoginUserInput } from './user.schema'
 import bcrypt from 'bcrypt'
 import prisma from '../../utils/prisma'
+import { HTTP_RESP_CODE as HttpStatus } from '../../common/constants'
 
 const SALT_ROUNDS = 10
 
@@ -19,7 +20,7 @@ export async function createUser(
     },
   })
   if (user) {
-    return reply.code(401).send({
+    return reply.code(HttpStatus.UNAUTHORIZED).send({
       message: 'User already exists with this email',
     })
   }
@@ -34,8 +35,8 @@ export async function createUser(
       },
     })
 
-    return reply.code(201).send(user)
+    return reply.code(HttpStatus.CREATED).send(user)
   } catch (e) {
-    return reply.code(500).send(e)
+    return reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send(e)
   }
 }
