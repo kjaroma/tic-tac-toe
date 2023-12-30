@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { createUser } from './user.controller'
+import { createUser, loginUser, logoutUser } from './user.controller'
 import { $ref } from '../../utils/server/loadSchemas'
 
 export async function userRoutes(app: FastifyInstance) {
@@ -26,10 +26,10 @@ export async function userRoutes(app: FastifyInstance) {
         },
       },
     },
-    () => {},
+    loginUser,
   )
 
-  app.delete('/logout', () => {})
+  app.delete('/logout', logoutUser)
 
   app.log.info('user routes registered')
-}
+  }

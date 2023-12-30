@@ -1,4 +1,4 @@
-import Fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
+import Fastify, { FastifyInstance, FastifyRequest, FastifyServerOptions } from "fastify";
 import fastifyJWT from "@fastify/jwt";
 import fastifyCookie from "@fastify/cookie";
 import { staticRoutes } from "./modules/static/static.routes";
@@ -7,6 +7,7 @@ import { healthcheckRoutes } from './modules/healthcheck/healthcheck.routes';
 import { loadSchemas } from './utils/server/loadSchemas';
 import { loadConfig } from './utils/server/config/loadConfig';
 import { userRoutes } from "./modules/user/user.routes";
+import { authHandler } from "./utils/server/authHandler";
 
 export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance> => {
   const app: FastifyInstance = Fastify(opts);
@@ -17,14 +18,15 @@ export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance>
   app.register(healthcheckRoutes, { prefix: '/healthcheck' })
 
   app.register(fastifyJWT, { secret: app.config.JWT_SECRET });
+  app.decorate('authenticate', authHandler)
 
   app.register(userRoutes, { prefix: "api/users" });
 
   // #############################
   
-  app.addHook("preHandler", (req, res, next) => {
+  app.addHook("preHandler", (req: FastifyRequest, _, done) => {
     req.jwt = app.jwt;
-    return next();
+    done();
   });
 
   // #############################
