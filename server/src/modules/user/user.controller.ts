@@ -15,11 +15,7 @@ export async function createUser(
   const { password, email, name } = req.body
   // TODO Validate input
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-  })
+  const user = await req.server.userService.getByEmail(email)
   if (user) {
     return reply.code(HttpStatus.UNAUTHORIZED).send({
       message: 'User already exists with this email',

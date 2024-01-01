@@ -1,13 +1,28 @@
 import fastifyWebsocket, { SocketStream } from "@fastify/websocket";
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest } from "fastify";
+import { createGame, joinGame } from "./game.controller";
+import { $ref } from "../../utils/server/loadSchemas";
 
 export async function gameRoutes(app: FastifyInstance) {
     await app.register(fastifyWebsocket)
-    app.get('/', {
-        websocket: true,
-        // TODO WS does not support cookies.
+
+    app.get('/create', {
         preHandler: [app.authenticate]
-    }, (conn: SocketStream) => {
+    },
+        createGame)
+
+    app.post('/join', {
+        schema: {
+            body: $ref('joinGameSchema')
+        },
+        preHandler: [app.authenticate]
+    },
+        joinGame)
+
+    app.get('/:gameId', {
+        websocket: true,
+    }, (conn: SocketStream, req: FastifyRequest) => {
+        console.log('Redirected to WS', req.url)
         conn.socket.on('open', () => {
             conn.socket.send('[SERVER] Connected to websocket\n')
         })

@@ -9,12 +9,15 @@ import { loadConfig } from './utils/server/config/loadConfig';
 import { userRoutes } from "./modules/user/user.routes";
 import { authHandler } from "./utils/server/authHandler";
 import { gameRoutes } from "./modules/game/game.routes";
+import { registerServices } from "./bootstrap/services";
 
 export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance> => {
   const app: FastifyInstance = Fastify(opts);
 
   loadSchemas(app)
   await loadConfig(app)
+  
+  registerServices(app)
 
   app.register(healthcheckRoutes, { prefix: '/healthcheck' })
 

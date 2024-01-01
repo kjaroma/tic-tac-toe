@@ -1,5 +1,6 @@
 import { JWT } from '@fastify/jwt'
 import { AppConfigType } from './utils/server/config/config.schema'
+import { UserService } from './services/user/userService'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -7,6 +8,7 @@ declare module 'fastify' {
   }
   interface FastifyInstance {
     config: AppConfigType,
+    userService: UserService,
     // TODO add more specific type
     authenticate: any,
   }
