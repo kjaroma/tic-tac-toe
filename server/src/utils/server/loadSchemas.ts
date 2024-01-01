@@ -1,3 +1,4 @@
+import { gameSchemas } from './../../modules/game/game.schemas';
 import { appConfigSchemas } from './config/config.schema';
 import { FastifyInstance } from "fastify";
 import { userSchemas } from "../../modules/user/user.schema";
@@ -8,6 +9,7 @@ export const { schemas, $ref } = buildJsonSchemas({
     ...healthcheckSchemas,
     ...userSchemas,
     ...appConfigSchemas,
+    ...gameSchemas,
 })
 
 export function loadSchemas(app: FastifyInstance) {
