@@ -13,17 +13,9 @@ const appConfigJsonSchema = {
         "JWT_SECRET": {
             "type": "string"
         },
-        "JWT_ISSUER": {
-            "type": "string"
-        },
-        "JWT_TTL_SECS": {
-            "type": "number"
-        }
     },
     "required": [
         "JWT_SECRET",
-        "JWT_ISSUER",
-        "JWT_TTL_SECS"
     ],
     "additionalProperties": false
 }
