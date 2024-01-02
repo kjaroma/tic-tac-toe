@@ -3,7 +3,7 @@ import z from "zod"
 const appConfigSchema = z.object({
     DATABASE_URL: z.string(),
     COOKIE_SIGN_SECRET: z.string(),
-    JWT_SECRET: z.string(),
+    JWT_SECRET: z.string().min(32),
     JWT_ISSUER: z.string(),
 })
 
