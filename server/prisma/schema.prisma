@@ -6,15 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./db/data.db"
-  // provider = "postgresql"
-  // url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id String @id @default(cuid())
-  email String @unique
-  name String?
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String?
   password String
+  host     Game[]  @relation(name: "host")
+  guest    Game[]  @relation(name: "guest")
+}
+
+model Game {
+  id       String  @id @default(cuid())
+  state    String
+  host     User?   @relation(name: "host", fields: [hostId], references: [id])
+  hostId   String?
+  guest    User?   @relation(name: "guest", fields: [guestId], references: [id])
+  guestId  String?
+  winnerId String?
+  gameData Json?
 }
