@@ -1,16 +1,17 @@
 import GameValidator from "../gameValidator/gameValidator.service"
-import { Board, BoardValue, IBoardValidator } from "./types"
+import { IGameService } from "../interfaces/IGameService"
+import { Board, BoardValue, IGameValidatorService } from "../interfaces/IGameValidatorService"
 
-class Game {
+class GameService implements IGameService {
   private board: Board = []
   private boardSize = 0
   private winner: BoardValue | undefined
-  private validator: IBoardValidator 
+  private validatorService: IGameValidatorService 
 
   constructor(boardSize = 3) {
     this.boardSize = boardSize
     this.createBoard(boardSize)
-    this.validator = new GameValidator(boardSize)
+    this.validatorService = new GameValidator(boardSize)
   }
 
   private createBoard(boardSize: number) {
@@ -27,19 +28,19 @@ class Game {
       return
     }
     this.board[col][row] = value
-    this.validateBoard();
+    // this.validateBoard();
   }
 
   private validateBoard() {
-    const winner = this.validator.validate(this.board)
+    const winner = this.validatorService.validate(this.board)
     if(winner !== null) {
       this.winner = winner
     }
   }
 
   public printBoard() {
-    console.log(JSON.stringify(this.board, null, 2))
+    console.log(this.board.map(r => r.map(el => el === null ? " " : el).join("|")).join('\n'))
   }
 }
 
-export default Game
+export default GameService
