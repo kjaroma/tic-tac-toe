@@ -10,6 +10,7 @@ export const ErrorMessages = {
     Auth: {
         RegistrationFailure: 'User registration failed', // Do not expose email taken information
         LoginFailure: 'Email or password are incorrect',
+        AuthenticationFailed: 'Authentication failed',
         GenericError: 'Something went wrong while registering user',
     }
 }

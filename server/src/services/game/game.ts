@@ -1,4 +1,4 @@
-import BoardValidator from "./Validator"
+import GameValidator from "../gameValidator/gameValidator.service"
 import { Board, BoardValue, IBoardValidator } from "./types"
 
 class Game {
@@ -10,7 +10,7 @@ class Game {
   constructor(boardSize = 3) {
     this.boardSize = boardSize
     this.createBoard(boardSize)
-    this.validator = new BoardValidator(boardSize)
+    this.validator = new GameValidator(boardSize)
   }
 
   private createBoard(boardSize: number) {

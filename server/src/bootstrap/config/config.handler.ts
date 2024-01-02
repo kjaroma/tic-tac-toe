@@ -1,7 +1,6 @@
+import { isDevEnv } from '../../utils/env';
 import { FastifyInstance } from 'fastify';
 import { fastifyEnv } from '@fastify/env'
-import { isDevEnv } from '../../env';
-import { $ref } from '../loadSchemas';
 
 // TODO Convert zod schema
 const appConfigJsonSchema = {

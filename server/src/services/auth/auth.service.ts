@@ -1,12 +1,12 @@
-import { UserService } from './../user/userService';
+import { UserService } from '../user/user.service';
 import { IAuthService } from "../interfaces/IAuthService";
 import bcrypt from 'bcrypt'
 import { User } from '@prisma/client';
-import { AppConfigType } from '../../utils/server/config/config.schema';
 import { UserPayload } from '../../types';
 import { JWT } from '@fastify/jwt';
 import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
+import { AppConfigType } from '../../bootstrap/config/config.schema';
 
 export class AuthService implements IAuthService {
 

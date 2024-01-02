@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { createUser, loginUser, logoutUser } from './user.controller'
-import { $ref } from '../../utils/server/loadSchemas'
+import { $ref } from '../../bootstrap/schemas/schemas.handler'
 
 export async function userRoutes(app: FastifyInstance) {
   app.post(

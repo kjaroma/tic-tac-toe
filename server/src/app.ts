@@ -2,15 +2,14 @@ import Fastify, { FastifyInstance, FastifyRequest, FastifyServerOptions } from "
 import fastifyJWT from "@fastify/jwt";
 import fastifyCookie from "@fastify/cookie";
 import { staticRoutes } from "./modules/static/static.routes";
-import { setupGracefulShutdown } from './utils/server/shutdown';
+import { setupGracefulShutdown } from './bootstrap/shutdown/shutdown';
 import { healthcheckRoutes } from './modules/healthcheck/healthcheck.routes';
-import { loadSchemas } from './utils/server/loadSchemas';
-import { loadConfig } from './utils/server/config/loadConfig';
+import { loadSchemas } from './bootstrap/schemas/schemas.handler';
 import { userRoutes } from "./modules/user/user.routes";
-import { authHandler } from "./utils/server/authHandler";
 import { gameRoutes } from "./modules/game/game.routes";
-import { registerServices } from "./bootstrap/services";
-import { errorHandler } from "./bootstrap/errors/errorHandler";
+import { registerServices } from "./bootstrap/services/services.handler";
+import { errorHandler } from "./bootstrap/errors/error.handler";
+import { loadConfig } from "./bootstrap/config/config.handler";
 
 export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance> => {
   const app: FastifyInstance = Fastify(opts);

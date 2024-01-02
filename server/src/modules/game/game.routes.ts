@@ -1,7 +1,7 @@
 import fastifyWebsocket, { SocketStream } from "@fastify/websocket";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { createGame, joinGame } from "./game.controller";
-import { $ref } from "../../utils/server/loadSchemas";
+import { $ref } from "../../bootstrap/schemas/schemas.handler";
 
 export async function gameRoutes(app: FastifyInstance) {
     await app.register(fastifyWebsocket)

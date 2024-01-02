@@ -1,7 +1,7 @@
 import { JWT } from '@fastify/jwt'
-import { AppConfigType } from './utils/server/config/config.schema'
-import { UserService } from './services/user/userService'
-import { AuthService } from './services/auth/authService'
+import { UserService } from './services/user/user.service'
+import { AuthService } from './services/auth/auth.service'
+import { AppConfigType } from './bootstrap/config/config.schema'
 
 declare module 'fastify' {
   interface FastifyRequest {

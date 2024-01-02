@@ -1,8 +1,8 @@
 import { UserRepository } from '../../repositories/UserRepository';
-import { AuthService } from '../../services/auth/authService';
+import { AuthService } from '../../services/auth/auth.service';
 import prisma from '../../utils/prisma';
-import { authHandler } from '../../utils/server/authHandler';
-import { UserService } from './../../services/user/userService';
+import { authHandler } from '../auth/auth.handler';
+import { UserService } from '../../services/user/user.service';
 import { FastifyInstance } from "fastify";
 
 export function registerServices(app: FastifyInstance) {

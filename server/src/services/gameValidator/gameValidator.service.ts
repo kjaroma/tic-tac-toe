@@ -1,7 +1,7 @@
-import { Board, BoardPlayerMove, BoardValue, IBoardValidator } from "./types"
-import { transposeArray } from "./utils"
+import { transposeArray } from "../game/utils"
+import { Board, BoardPlayerMove, BoardValue, IGameValidatorService } from "../interfaces/IGameValidatorService"
 
-class BoardValidator implements IBoardValidator {
+class GameValidator implements IGameValidatorService {
   private boardSize = 0
   constructor(boardSize: number) {
     this.boardSize = boardSize
@@ -45,4 +45,4 @@ class BoardValidator implements IBoardValidator {
   }
 }
 
-export default BoardValidator
+export default GameValidator

@@ -1,4 +1,4 @@
-import { UserRepository } from './../../repositories/UserRepository';
+import { UserRepository } from '../../repositories/UserRepository';
 import { User } from "@prisma/client";
 import { IUserService } from "../interfaces/IUserService";
 import { CreateUserInput } from "../../modules/user/user.schema";
