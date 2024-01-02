@@ -1,10 +1,15 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ApiError } from '../../common/errors';
 import { HttpStatus } from '../../common/constants';
+
 export async function errorHandler(error: ApiError | Error, req: FastifyRequest, reply: FastifyReply) {
-    // TODO Handle errors properly
+    const statusCode = error instanceof ApiError ? error.statusCode : HttpStatus.INTERNAL_SERVER_ERROR
     req.server.log.error({
-        data: JSON.stringify(error)
+        status: statusCode,
+        message: error.message,
+        stack: error.stack,
+        ip: req.ip
     })
-    reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: error.message})
+    
+    reply.status(statusCode).send({message: error.message})
 }

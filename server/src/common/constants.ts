@@ -6,4 +6,10 @@ export const HttpStatus = {
     INTERNAL_SERVER_ERROR: 500,
 } as const
 
-// TODO Add messages
+export const ErrorMessages = {
+    Auth: {
+        RegistrationFailure: 'User registration failed', // Do not expose email taken information
+        LoginFailure: 'Email or password are incorrect',
+        GenericError: 'Something went wrong while registering user',
+    }
+}

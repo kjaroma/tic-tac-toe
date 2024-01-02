@@ -5,7 +5,8 @@ import { User } from '@prisma/client';
 import { AppConfigType } from '../../utils/server/config/config.schema';
 import { UserPayload } from '../../types';
 import { JWT } from '@fastify/jwt';
-import { log } from 'console';
+import { ApiError } from '../../common/errors';
+import { ErrorMessages, HttpStatus } from '../../common/constants';
 
 export class AuthService implements IAuthService {
 
@@ -16,11 +17,11 @@ export class AuthService implements IAuthService {
         private readonly config: AppConfigType,
         private readonly jwt: JWT,
     ) { }
+
     async register(email: string, password: string, name: string): Promise<any> {
         const user = await this.userService.getByEmail(email)
         if (user) {
-            // TODO Use proper error
-            throw new Error('Email already taken') // Conflict?
+            throw new ApiError(ErrorMessages.Auth.RegistrationFailure, HttpStatus.UNAUTHORIZED)
         }
 
         try {
@@ -29,8 +30,7 @@ export class AuthService implements IAuthService {
             return this.createAuthToken(user)
         } 
         catch (e) {
-            // TODO Use proper error
-            throw new Error('Something went wrong creating user') // 500
+            throw new Error(ErrorMessages.Auth.GenericError)
         }
     }
 
@@ -38,7 +38,7 @@ export class AuthService implements IAuthService {
         const user = await this.userService.getByEmail(email);
         const isValidUser = user && (await bcrypt.compare(password, user.password))
         if(!user || !isValidUser) {
-            throw new Error('Invalid email or password') // Unauthorised
+            throw new ApiError(ErrorMessages.Auth.LoginFailure, HttpStatus.UNAUTHORIZED)
         }
 
         return this.createAuthToken(user)
