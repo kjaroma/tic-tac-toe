@@ -11,7 +11,6 @@ export class UserService implements IUserService {
         return this.userRepository.findUnique({email})
     }
     create(user: CreateUserInput): Promise<User> {
-        // TODO Do not return password
         return this.userRepository.create(user as User)
     }
 }

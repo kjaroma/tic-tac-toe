@@ -10,9 +10,7 @@ const createUserSchema = z.object({
 export type CreateUserInput = z.infer<typeof createUserSchema>
 
 const createUserResponseSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  name: z.string(),
+  accessToken: z.string(),
 })
 
 const loginSchema = z.object({

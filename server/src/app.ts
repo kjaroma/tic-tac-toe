@@ -10,22 +10,19 @@ import { userRoutes } from "./modules/user/user.routes";
 import { authHandler } from "./utils/server/authHandler";
 import { gameRoutes } from "./modules/game/game.routes";
 import { registerServices } from "./bootstrap/services";
+import { errorHandler } from "./bootstrap/errors/errorHandler";
 
 export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance> => {
   const app: FastifyInstance = Fastify(opts);
 
+  app.setErrorHandler(errorHandler)
+
   loadSchemas(app)
   await loadConfig(app)
+
+  await app.register(fastifyJWT, { secret: app.config.JWT_SECRET });
   
   registerServices(app)
-
-  app.register(healthcheckRoutes, { prefix: '/healthcheck' })
-
-  app.register(fastifyJWT, { secret: app.config.JWT_SECRET });
-  app.decorate('authenticate', authHandler)
-
-  app.register(userRoutes, { prefix: "api/users" });
-  app.register(gameRoutes, {prefix: 'api/games'});
 
   app.addHook("preHandler", (req: FastifyRequest, _, done) => {
     req.jwt = app.jwt;
@@ -36,6 +33,10 @@ export const init = async (opts: FastifyServerOptions): Promise<FastifyInstance>
     secret: app.config.COOKIE_SIGN_SECRET,
     hook: "preHandler",
   });
+
+  app.register(healthcheckRoutes, { prefix: '/healthcheck' })
+  app.register(userRoutes, { prefix: "api/users" });
+  app.register(gameRoutes, {prefix: 'api/games'});
 
   app.register(staticRoutes);
 

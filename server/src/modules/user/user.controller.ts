@@ -1,7 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { CreateUserInput, LoginUserInput } from './user.schema'
-import bcrypt from 'bcrypt'
-import prisma from '../../utils/prisma'
 import { HttpStatus as HttpStatus } from '../../common/constants'
 
 const SALT_ROUNDS = 10
@@ -12,30 +10,17 @@ export async function createUser(
   }>,
   reply: FastifyReply,
 ) {
-  const { password, email, name } = req.body
+  const { email, password, name } = req.body
   // TODO Validate input
 
-  const user = await req.server.userService.getByEmail(email)
-  if (user) {
-    return reply.code(HttpStatus.UNAUTHORIZED).send({
-      message: 'User already exists with this email',
-    })
-  }
-
-  try {
-    const hash = await bcrypt.hash(password, SALT_ROUNDS)
-    const user = await prisma.user.create({
-      data: {
-        password: hash,
-        email,
-        name,
-      },
-    })
-
-    return reply.code(HttpStatus.CREATED).send(user)
-  } catch (e) {
-    return reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send(e)
-  }
+  const accessToken = await req.server.authService.register(email, password, name)
+  
+  reply.setCookie('access_token', accessToken, {
+    path: '/',
+    httpOnly: true,
+    secure: true,
+  })
+  reply.status(HttpStatus.CREATED).send(accessToken)
 }
 
 export async function loginUser(
@@ -46,30 +31,16 @@ export async function loginUser(
 ) {
   const { email, password } = req.body
   // TODO validate input
-  const user = await prisma.user.findUnique({ where: { email } })
 
-  const isValidUser = user && (await bcrypt.compare(password, user.password))
+  const accessToken = await req.server.authService.login(email, password)
 
-  if (!user || !isValidUser) {
-    return reply.code(HttpStatus.UNAUTHORIZED).send({
-      message: "Invalid email or password"
-    })
-  }
-
-  const payload = {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-  }
-  const token = req.jwt.sign(payload)
-
-  reply.setCookie('access_token', token, {
+  reply.setCookie('access_token', accessToken, {
     path: '/',
     httpOnly: true,
     secure: true,
   })
 
-  return { accessToken: token }
+  return accessToken
 }
 
 export async function logoutUser(req: FastifyRequest, reply: FastifyReply) {
