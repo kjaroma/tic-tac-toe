@@ -6,6 +6,7 @@
         ],
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
+        "types": ["node", "jest"],
         "resolveJsonModule": true,
         "allowJs": true,
         "outDir": "dist",

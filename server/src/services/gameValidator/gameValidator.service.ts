@@ -1,47 +1,40 @@
-import { transposeArray } from "../game/utils"
-import { Board, BoardPlayerMove, BoardValue, IGameValidatorService } from "../interfaces/IGameValidatorService"
+import { Board, BoardValue } from "../../shared/types"
+import { generate2DArray, transposeArray } from "../../utils/array"
+import { IGameValidatorService } from "../interfaces/IGameValidatorService"
 
 class GameValidator implements IGameValidatorService {
-  private boardSize = 0
-  constructor(boardSize: number) {
-    this.boardSize = boardSize
+  winningIndexMap: number[][] = []
+  constructor(private readonly boardSize: number) {
+    this.generateWinMap()
   }
 
-  private isBoardSizeValid(board: Board): boolean {
-    return board.every(row => row.length === board.length)
+  private generateWinMap() {
+    const board = generate2DArray(this.boardSize, null)
+    // Generate indexes of flatten board for row win
+    const rows = board.map((row, ridx) => row.map((_, idx) => (ridx * this.boardSize) + idx))
+    // The same for cols, just transpose array
+    const cols = transposeArray(rows)
+    // Add diagonal win
+    const diagTL = rows.map((row, idx) => row[idx])
+    // Another diagonal win
+    const diagTR = rows.map((row, idx) => row[row.length - idx - 1])
+    // Get the middle board index
+    const middleIndex = Math.floor(this.boardSize / 2)
+    // Cover double win when winning combination has cross pattern
+    const doubleWin = Array.from(new Set([...rows[middleIndex], ...cols[middleIndex]])).sort()
+    // Put double win first, as it's also covered by the rows and cols win combinations
+    const winMap = [doubleWin, ...rows, ...cols, diagTL, diagTR]
+    this.winningIndexMap = winMap
   }
 
-  public validate(board: Board): BoardValue {
-
-    const getRowSet = (row: BoardValue[]): Set<BoardValue> | undefined => row.every(el => el !== null) ? new Set(row) : undefined
-
-    if (!this.isBoardSizeValid(board)) {
-      // Not square board
-      // Throw new error
-      return null
-    }
-    // Looking for a winner procedure:
-    // - filter rows with all cells set,
-    // - filter cols with all cells set,
-    // - add diagonals if all cells set,
-    // - create set from all filtered rows,
-    // - find one set with length 1,
-    // - get the set value,
-    // - set value is the winner. 
-    // Look for row winner
-    const rowSets = board.map(getRowSet).filter(Boolean)
-    const colSets = transposeArray(board).map(getRowSet).filter(Boolean)
-    
-    const topBottomDiagonalSet = board.map((row, idx) => row[idx])
-    const bottomTopDiagonalSet = board.map((row, idx) => row[board.length - idx - 1])
-
-    console.log(topBottomDiagonalSet, bottomTopDiagonalSet)
-
-    const winningSet = [rowSets, colSets].find(set => (set as unknown as Set<BoardPlayerMove>).size === 1)
-    if(winningSet) {
-      return (winningSet as unknown as Set<BoardPlayerMove>).values().next().value
-    }
-    return null
+  public validate(board: Board, value: BoardValue): number[] {
+    const flatten = board.flat()
+    const result = this.winningIndexMap.find(combination => {
+      return combination.every(index => {
+        return flatten[index] === value
+      })
+    })
+    return result ?? []
   }
 }
 

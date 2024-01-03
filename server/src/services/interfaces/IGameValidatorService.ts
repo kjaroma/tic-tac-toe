@@ -1,7 +1,5 @@
-export type BoardPlayerMove = 'x' | 'o'
-export type BoardValue = BoardPlayerMove | null
-export type Board = (BoardValue | null)[][]
+import { Board, BoardValue } from "../../shared/types";
 
 export interface IGameValidatorService {
-  validate: (board: Board) => BoardValue
+  validate: (board: Board, value: BoardValue) => number[]
 }
