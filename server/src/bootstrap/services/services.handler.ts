@@ -4,6 +4,8 @@ import prisma from '../../utils/prisma';
 import { authHandler } from '../auth/auth.handler';
 import { UserService } from '../../services/user/user.service';
 import { FastifyInstance } from "fastify";
+import GameService from '../../services/game/game.service';
+import { GameRepository } from '../../repositories/GameRepository';
 
 export function registerServices(app: FastifyInstance) {
     app.decorate('authenticate', authHandler)
@@ -14,4 +16,8 @@ export function registerServices(app: FastifyInstance) {
 
     const authService = new AuthService(userService, app.config, app.jwt)
     app.decorate('authService', authService)
+
+    const gameRepository = new GameRepository(prisma)
+    const gameService = new GameService(gameRepository)
+    app.decorate('gameService', gameService)
 }

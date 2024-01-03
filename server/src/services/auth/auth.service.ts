@@ -34,6 +34,7 @@ export class AuthService implements IAuthService {
         }
     }
 
+    // TODO Type this
     async login(email: string, password: string): Promise<any> {
         const user = await this.userService.getByEmail(email);
         const isValidUser = user && (await bcrypt.compare(password, user.password))

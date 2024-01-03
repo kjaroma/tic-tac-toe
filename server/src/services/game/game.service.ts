@@ -1,17 +1,29 @@
+import { Game } from "@prisma/client"
+import { GameRepository } from "../../repositories/GameRepository"
 import GameValidator from "../gameValidator/gameValidator.service"
 import { IGameService } from "../interfaces/IGameService"
 import { Board, BoardValue, IGameValidatorService } from "../interfaces/IGameValidatorService"
+import { GameStatus } from "./types"
+import { ApiError } from "../../common/errors"
+import { ErrorMessages, HttpStatus } from "../../common/constants"
 
 class GameService implements IGameService {
   private board: Board = []
-  private boardSize = 0
   private winner: BoardValue | undefined
-  private validatorService: IGameValidatorService 
+  private validatorService: IGameValidatorService
 
-  constructor(boardSize = 3) {
-    this.boardSize = boardSize
+  // TODO Remove hardcoded value
+  constructor(private readonly gameRepository: GameRepository, private readonly boardSize = 3) {
     this.createBoard(boardSize)
     this.validatorService = new GameValidator(boardSize)
+  }
+
+  public async createGame(): Promise<Game | never> {
+    try {
+      return await this.gameRepository.create({ state: GameStatus.CREATED } as Game)
+    } catch (e) {
+      throw new ApiError(ErrorMessages.Game.CreationFailed, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
   private createBoard(boardSize: number) {
@@ -33,7 +45,7 @@ class GameService implements IGameService {
 
   private validateBoard() {
     const winner = this.validatorService.validate(this.board)
-    if(winner !== null) {
+    if (winner !== null) {
       this.winner = winner
     }
   }

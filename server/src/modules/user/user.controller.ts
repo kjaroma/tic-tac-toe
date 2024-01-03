@@ -32,15 +32,16 @@ export async function loginUser(
   const { email, password } = req.body
   // TODO validate input
 
-  const accessToken = await req.server.authService.login(email, password)
+  const payload = await req.server.authService.login(email, password)
 
-  reply.setCookie('access_token', accessToken, {
+  // TODO Type access token response
+  reply.setCookie('access_token', payload.accessToken, {
     path: '/',
     httpOnly: true,
     secure: true,
   })
 
-  return accessToken
+  return payload
 }
 
 export async function logoutUser(req: FastifyRequest, reply: FastifyReply) {

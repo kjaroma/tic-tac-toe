@@ -14,21 +14,18 @@ export async function gameRoutes(app: FastifyInstance) {
     })
 
     app.get('/create', {
+        schema: {
+            response: {
+                201: $ref('createGameResponseSchema'),
+            },
+        },
         preHandler: [app.authenticate]
     },
         createGame)
 
-    app.post('/join', {
-        schema: {
-            body: $ref('joinGameSchema')
-        },
-        preHandler: [app.authenticate]
-    },
-        joinGame)
-
     app.get('/:gameId', {
         websocket: true,
-    }, (conn: SocketStream, req: FastifyRequest) => {
+    }, async (conn: SocketStream, req: FastifyRequest) => {
         const broadCastMessage = (message: string) => {
             for (const client of server.clients) {
                 client.send(message)
@@ -40,9 +37,12 @@ export async function gameRoutes(app: FastifyInstance) {
             conn.socket.close()
         }
         if (server.clients.size === 2) {
-                broadCastMessage("Second player joined, starting game")
+            broadCastMessage("Second player joined, starting game")
         }
+        const game = await app.gameService.createGame()
+        console.log(game)
         conn.socket.on('message', (message) => {
+            // TODO Do not handle messages when less than 2 users are connected
             const payload = JSON.parse(message.toString())
             switch (payload.type) {
                 case 'move':
@@ -51,8 +51,7 @@ export async function gameRoutes(app: FastifyInstance) {
                 default:
                     break
             }
-            // game.printBoard()
-            broadCastMessage(`[SERVER] Received the message: ${message.toString()}\n`)
+            broadCastMessage(`Current board: ${JSON.stringify(null, null, 2)}\n`)
         })
     })
 }

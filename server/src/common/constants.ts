@@ -12,5 +12,9 @@ export const ErrorMessages = {
         LoginFailure: 'Email or password are incorrect',
         AuthenticationFailed: 'Authentication failed',
         GenericError: 'Something went wrong while registering user',
+    },
+    Game: {
+        CreationFailed: 'Game creation failed',
     }
+
 }
