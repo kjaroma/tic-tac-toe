@@ -25,6 +25,4 @@ yarn-error.log*
 .vscode
 
 # Temporary
-server/prisma/db/*.*
-server/prisma/db/data.db
-server/prisma/db/data.db-journal
+server/prisma/migrations/
