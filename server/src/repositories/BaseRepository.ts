@@ -4,11 +4,18 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
 
     constructor(protected readonly model: any){}
 
-    async create(item: T): Promise<T> {
-        return await this.model.create({data: item})
+    async create(data: T): Promise<T> {
+        return await this.model.create({data})
     }
 
     async findUnique(queryOption: Record<string, unknown>): Promise<T> {
         return await this.model.findUnique({where: queryOption})
+    }
+
+    async update(queryOption: Record<string, unknown>, data: T): Promise<T> {
+        return await this.model.update({
+            where: queryOption,
+            data,
+        })
     }
 }

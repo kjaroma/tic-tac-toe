@@ -1,5 +1,6 @@
-export enum GameStatus {
-  CREATED = 'created'
+export enum GameState {
+  CREATED = 'created',
+  STARTED = 'started'
 }
 
 export enum GameMessageTypes {

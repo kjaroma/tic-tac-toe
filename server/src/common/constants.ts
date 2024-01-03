@@ -15,6 +15,7 @@ export const ErrorMessages = {
     },
     Game: {
         CreationFailed: 'Game creation failed',
+        UpdateFailed: 'Game update failed',
     }
 
 }

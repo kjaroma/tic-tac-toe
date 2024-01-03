@@ -3,6 +3,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { createGame, joinGame } from "./game.controller";
 import { $ref } from "../../bootstrap/schemas/schemas.handler";
 import GameService from "../../services/game/game.service";
+import { GameState } from "../../services/game/types";
 
 export async function gameRoutes(app: FastifyInstance) {
     await app.register(fastifyWebsocket, {
@@ -28,8 +29,12 @@ export async function gameRoutes(app: FastifyInstance) {
     }, async (conn: SocketStream, req: FastifyRequest) => {
 
         const { gameId } = req.params as { gameId: string }
-        const game = await app.gameService.findGameById(gameId)
-        console.log('Game found', game)
+        // TODO Find better way to do not update the same reference
+        let game
+        game = await app.gameService.findGameById(gameId)
+        if (!game) {
+            throw new Error('Game not found')
+        }
 
         const broadCastMessage = (message: string) => {
             for (const client of server.clients) {
@@ -42,8 +47,19 @@ export async function gameRoutes(app: FastifyInstance) {
             conn.socket.send(`Game full, try create new game`)
             conn.socket.close()
         }
+
+            // TODO Get user Id from token
+        const userId = "clqx0nmf200013snrvztckjlp"
+        const userId2 = "clqx0ej4l00003snr03auyjdj"
+        if (server.clients.size === 1 && game.hostId !== null && game.hostId !== userId) {
+            game = await app.gameService.setGameHost(game, userId)
+        } else {
+            game = await app.gameService.setGameGuest(game, userId2)
+        }
+
         if (server.clients.size === 2) {
             broadCastMessage("Second player joined, starting game")
+            game = await app.gameService.setGameState(game, GameState.STARTED)
             conn.socket.on('message', (message) => {
 
                 const payload = JSON.parse(message.toString())
@@ -54,7 +70,7 @@ export async function gameRoutes(app: FastifyInstance) {
                     default:
                         break
                 }
-                
+
                 broadCastMessage(`Current board: ${JSON.stringify(null, null, 2)}\n`)
             })
         }
