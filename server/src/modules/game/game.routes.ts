@@ -26,11 +26,17 @@ export async function gameRoutes(app: FastifyInstance) {
     app.get('/:gameId', {
         websocket: true,
     }, async (conn: SocketStream, req: FastifyRequest) => {
+
+        const { gameId } = req.params as { gameId: string }
+        const game = await app.gameService.findGameById(gameId)
+        console.log('Game found', game)
+
         const broadCastMessage = (message: string) => {
             for (const client of server.clients) {
                 client.send(message)
             }
         }
+
         const server = app.websocketServer
         if (server.clients.size > 2) {
             conn.socket.send(`Game full, try create new game`)
@@ -38,20 +44,19 @@ export async function gameRoutes(app: FastifyInstance) {
         }
         if (server.clients.size === 2) {
             broadCastMessage("Second player joined, starting game")
+            conn.socket.on('message', (message) => {
+
+                const payload = JSON.parse(message.toString())
+                switch (payload.type) {
+                    case 'move':
+                        // game.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
+                        break
+                    default:
+                        break
+                }
+                
+                broadCastMessage(`Current board: ${JSON.stringify(null, null, 2)}\n`)
+            })
         }
-        const game = await app.gameService.createGame()
-        console.log(game)
-        conn.socket.on('message', (message) => {
-            // TODO Do not handle messages when less than 2 users are connected
-            const payload = JSON.parse(message.toString())
-            switch (payload.type) {
-                case 'move':
-                    // game.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
-                    break
-                default:
-                    break
-            }
-            broadCastMessage(`Current board: ${JSON.stringify(null, null, 2)}\n`)
-        })
     })
 }

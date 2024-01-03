@@ -1,4 +1,4 @@
-import { Game } from "@prisma/client"
+import { Game, Prisma } from "@prisma/client"
 import { GameRepository } from "../../repositories/GameRepository"
 import GameValidator from "../gameValidator/gameValidator.service"
 import { IGameService } from "../interfaces/IGameService"
@@ -17,6 +17,9 @@ class GameService implements IGameService {
     this.createBoard(boardSize)
     this.validatorService = new GameValidator(boardSize)
   }
+  updateGame(id: string, game: Omit<{ id: string; state: string; hostId: string | null; guestId: string | null; winnerId: string | null; gameData: Prisma.JsonValue }, "id">): { id: string; state: string; hostId: string | null; guestId: string | null; winnerId: string | null; gameData: Prisma.JsonValue } {
+    throw new Error("Method not implemented.")
+  }
 
   public async createGame(): Promise<Game | never> {
     try {
@@ -25,6 +28,11 @@ class GameService implements IGameService {
       throw new ApiError(ErrorMessages.Game.CreationFailed, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  public async findGameById(id: string): Promise<Game | null> {
+    const game = await this.gameRepository.findUnique({id})
+    return game
+  } 
 
   private createBoard(boardSize: number) {
     this.board = Array.from({ length: boardSize }, () => Array.from({ length: boardSize }, () => null))
