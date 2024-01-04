@@ -1,7 +1,7 @@
-import z from "zod";
+import z from 'zod';
 
 export const healthcheckResponseSchema = z.object({
-    status: z.literal("OK")
-}) 
+  status: z.literal('OK'),
+});
 
-export const healthcheckSchemas = { healthcheckResponseSchema }
+export const healthcheckSchemas = { healthcheckResponseSchema };

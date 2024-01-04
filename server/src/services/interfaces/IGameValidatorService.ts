@@ -1,5 +1,5 @@
-import { Board, BoardValue } from "../../shared/types";
+import { Board, BoardValue } from '../../shared/types';
 
 export interface IGameValidatorService {
-  validate: (board: Board, value: BoardValue) => number[]
+  validate: (board: Board, value: BoardValue) => number[];
 }

@@ -1,6 +1,6 @@
 export enum GameState {
   CREATED = 'created',
-  STARTED = 'started'
+  STARTED = 'started',
 }
 
 export enum GameMessageTypes {
@@ -9,21 +9,21 @@ export enum GameMessageTypes {
 }
 
 type GamePosition = {
-  column: number,
-  row: number,
-}
+  column: number;
+  row: number;
+};
 
 type GameMove = {
-  player: string,
-  position: GamePosition
-}
+  player: string;
+  position: GamePosition;
+};
 
 type GameData = {
-  id: string,
+  id: string;
   players: {
-    hostId: string,
-    guestId: string,
-  }
-  winner: string,
-  moves: GameMove
-}
+    hostId: string;
+    guestId: string;
+  };
+  winner: string;
+  moves: GameMove;
+};
