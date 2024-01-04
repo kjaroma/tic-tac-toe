@@ -6,9 +6,7 @@ const createUserSchema = z.object({
   name: z.string(),
 });
 
-export type CreateUserInput = z.infer<typeof createUserSchema>;
-
-const createUserResponseSchema = z.object({
+const authenticatedResponseSchema = z.object({
   accessToken: z.string(),
 });
 
@@ -21,15 +19,14 @@ const loginSchema = z.object({
     .email(),
   password: z.string().min(6),
 });
+
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type AuthenticatedResponse = z.infer<typeof authenticatedResponseSchema>
 export type LoginUserInput = z.infer<typeof loginSchema>;
 
-const loginResponseSchema = z.object({
-  accessToken: z.string(),
-});
 
 export const userSchemas = {
   createUserSchema,
-  createUserResponseSchema,
   loginSchema,
-  loginResponseSchema,
+  authenticatedResponseSchema,
 };

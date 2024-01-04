@@ -13,8 +13,7 @@ declare module 'fastify' {
     userService: UserService;
     authService: AuthService;
     gameService: GameService;
-    // TODO add more specific type
-    authenticate: any;
+    authenticate: (req: FastifyRequest) => void;
   }
 }
 

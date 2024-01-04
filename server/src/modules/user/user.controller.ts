@@ -11,18 +11,18 @@ export async function createUser(
   const { email, password, name } = req.body;
   // TODO Validate input
 
-  const accessToken = await req.server.authService.register(
+  const payload = await req.server.authService.register(
     email,
     password,
     name,
   );
 
-  reply.setCookie('access_token', accessToken, {
+  reply.setCookie('access_token', payload.accessToken, {
     path: '/',
     httpOnly: true,
     secure: true,
   });
-  reply.status(HttpStatus.CREATED).send(accessToken);
+  reply.status(HttpStatus.CREATED).send(payload);
 }
 
 export async function loginUser(
@@ -36,7 +36,6 @@ export async function loginUser(
 
   const payload = await req.server.authService.login(email, password);
 
-  // TODO Type access token response
   reply.setCookie('access_token', payload.accessToken, {
     path: '/',
     httpOnly: true,

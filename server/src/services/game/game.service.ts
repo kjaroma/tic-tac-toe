@@ -3,17 +3,16 @@ import { GameRepository } from '../../repositories/GameRepository';
 import GameValidator from '../gameValidator/gameValidator.service';
 import { IGameService } from '../interfaces/IGameService';
 import {
-  Board,
-  BoardValue,
   IGameValidatorService,
 } from '../interfaces/IGameValidatorService';
 import { GameState } from './types';
 import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
+import { Board, BoardValue } from '../../shared/types';
 
 class GameService implements IGameService {
   private board: Board = [];
-  private winner: BoardValue | undefined;
+  private winningIndexes: number[] = [];
   private validatorService: IGameValidatorService;
 
   // TODO Remove board size hardcoded value
@@ -114,9 +113,9 @@ class GameService implements IGameService {
   }
 
   private validateBoard() {
-    const winner = this.validatorService.validate(this.board);
-    if (winner !== null) {
-      this.winner = winner;
+    const indexes = this.validatorService.validate(this.board, "x");
+    if (indexes.length) {
+      this.winningIndexes = indexes;
     }
   }
 

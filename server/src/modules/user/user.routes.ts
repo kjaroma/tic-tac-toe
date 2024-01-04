@@ -9,7 +9,7 @@ export async function userRoutes(app: FastifyInstance) {
       schema: {
         body: $ref('createUserSchema'),
         response: {
-          201: $ref('createUserResponseSchema'),
+          201: $ref('authenticatedResponseSchema'),
         },
       },
     },
@@ -22,7 +22,7 @@ export async function userRoutes(app: FastifyInstance) {
       schema: {
         body: $ref('loginSchema'),
         response: {
-          201: $ref('loginResponseSchema'),
+          201: $ref('authenticatedResponseSchema'),
         },
       },
     },

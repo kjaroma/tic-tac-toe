@@ -1,3 +1,4 @@
+import { AuthenticatedResponse } from './../../modules/user/user.schema';
 import { UserService } from '../user/user.service';
 import { IAuthService } from '../interfaces/IAuthService';
 import bcrypt from 'bcrypt';
@@ -17,7 +18,7 @@ export class AuthService implements IAuthService {
     private readonly jwt: JWT,
   ) {}
 
-  async register(email: string, password: string, name: string): Promise<any> {
+  async register(email: string, password: string, name: string): Promise<AuthenticatedResponse> {
     const user = await this.userService.getByEmail(email);
     if (user) {
       throw new ApiError(
@@ -39,8 +40,7 @@ export class AuthService implements IAuthService {
     }
   }
 
-  // TODO Type this
-  async login(email: string, password: string): Promise<any> {
+  async login(email: string, password: string): Promise<AuthenticatedResponse> {
     const user = await this.userService.getByEmail(email);
     const isValidUser = user && (await bcrypt.compare(password, user.password));
     if (!user || !isValidUser) {
@@ -53,7 +53,7 @@ export class AuthService implements IAuthService {
     return this.createAuthToken(user);
   }
 
-  private createAuthToken(user: User): Record<string, unknown> {
+  private createAuthToken(user: User): AuthenticatedResponse {
     const { id, name, email } = user;
     const payload: UserPayload = {
       sub: id,

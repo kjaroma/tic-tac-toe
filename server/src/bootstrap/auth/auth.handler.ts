@@ -1,9 +1,9 @@
 import { FastifyRequest } from 'fastify';
+import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
 import { FastifyJWT } from '@fastify/jwt';
-import { ApiError } from '../../common/errors';
 
-export async function authHandler(req: FastifyRequest) {
+export function authHandler(req: FastifyRequest) {
   const token = req.cookies.access_token;
   if (!token) {
     throw new ApiError(
