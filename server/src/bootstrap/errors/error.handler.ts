@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { ApiError } from '../../common/errors';
 import { HttpStatus } from '../../common/constants';
 
