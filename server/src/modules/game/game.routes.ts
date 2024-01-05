@@ -2,7 +2,7 @@ import fastifyWebsocket, { SocketStream } from '@fastify/websocket';
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { createGame } from './game.controller';
 import { $ref } from '../../bootstrap/schemas/schemas.handler';
-import { GameState } from '../../services/game/types';
+import { GameState } from '../../shared/types';
 
 export async function gameRoutes(app: FastifyInstance) {
   await app.register(fastifyWebsocket, {
@@ -27,11 +27,35 @@ export async function gameRoutes(app: FastifyInstance) {
   );
 
   app.get(
+    '/test',
+    {
+      websocket: true,
+    }, async function (connection: SocketStream) {
+      const { socket } = connection;
+      const random = Math.random()
+      socket.on('message', (message) => {
+        app.log.info(message.toString())
+        const payload = JSON.parse(message.toString());
+        switch (payload.type) {
+          case 'move':
+            app.gameService.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
+            break;
+          default:
+            break;
+        }
+        socket.send(random.toString())
+        app.gameService.printBoard()
+      })
+    }
+  )
+
+  app.get(
     '/:gameId',
     {
       websocket: true,
     },
-    async (conn: SocketStream, req: FastifyRequest) => {
+    async function (conn: SocketStream, req: FastifyRequest) {
+
       const { gameId } = req.params as { gameId: string };
       // TODO Find better way to do not update the same reference
       let game;
@@ -39,6 +63,9 @@ export async function gameRoutes(app: FastifyInstance) {
       if (!game) {
         throw new Error('Game not found');
       }
+
+      const random = Math.random()
+      console.log(random)
 
       const broadCastMessage = (message: string) => {
         for (const client of server.clients) {
@@ -69,18 +96,21 @@ export async function gameRoutes(app: FastifyInstance) {
         broadCastMessage('Second player joined, starting game');
         game = await app.gameService.setGameState(game, GameState.STARTED);
         conn.socket.on('message', (message) => {
+          broadCastMessage(random.toString())
+          console.log(server.clients.size)
           const payload = JSON.parse(message.toString());
           switch (payload.type) {
             case 'move':
-              // game.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
+              app.gameService.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
               break;
             default:
               break;
           }
-
-          broadCastMessage(`Current board: ${JSON.stringify(null, null, 2)}\n`);
+          app.gameService.printBoard()
+          broadCastMessage(`Current board: ${JSON.stringify("?", null, 2)}\n`);
         });
       }
     },
   );
+
 }

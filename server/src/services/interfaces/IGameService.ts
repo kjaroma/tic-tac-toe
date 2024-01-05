@@ -1,6 +1,5 @@
 import { Game } from '@prisma/client';
-import { GameState } from '../game/types';
-import { BoardValue } from '../../shared/types';
+import { BoardValue, GameState } from '../../shared/types';
 
 export interface IGameService {
   createGame(): Promise<Game | never>;
