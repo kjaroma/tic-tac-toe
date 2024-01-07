@@ -1,7 +1,11 @@
 // Shared types used both on server and client
-export type BoardPlayerMove = 'x' | 'o';
-export type BoardValue = BoardPlayerMove | null;
+export type BoardValue = BoardSymbol | null;
 export type Board = (BoardValue | null)[][];
+
+export enum BoardSymbol {
+  X = 'x',
+  O = 'o'
+}
 
 export enum GameState {
   CREATED = 'created',
@@ -23,11 +27,16 @@ export type GameMove = {
   position: GamePosition;
 };
 
+export type GamePlayer = {
+  id: string;
+  name: string;
+};
+
 type GameData = {
   id: string;
   players: {
-    hostId: string;
-    guestId: string;
+    host: GamePlayer;
+    guest: GamePlayer;
   };
   winner: string;
   moves: GameMove;

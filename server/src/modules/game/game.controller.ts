@@ -5,7 +5,3 @@ export async function createGame(req: FastifyRequest, reply: FastifyReply) {
   const { id } = await req.server.gameService.createGame();
   reply.status(HttpStatus.CREATED).send({ gameId: id });
 }
-
-export async function joinGame() {
-  console.log('Game joined');
-}

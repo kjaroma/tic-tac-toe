@@ -30,24 +30,25 @@ export async function gameRoutes(app: FastifyInstance) {
     '/test',
     {
       websocket: true,
-    }, async function (connection: SocketStream) {
+    },
+    async function (connection: SocketStream) {
       const { socket } = connection;
-      const random = Math.random()
+      const random = Math.random();
       socket.on('message', (message) => {
-        app.log.info(message.toString())
+        app.log.info(message.toString());
         const payload = JSON.parse(message.toString());
         switch (payload.type) {
           case 'move':
-            app.gameService.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
+            app.gameService.setMove(payload.col, payload.row);
             break;
           default:
             break;
         }
-        socket.send(random.toString())
-        app.gameService.printBoard()
-      })
-    }
-  )
+        socket.send(random.toString());
+        app.gameService.printBoard();
+      });
+    },
+  );
 
   app.get(
     '/:gameId',
@@ -55,17 +56,17 @@ export async function gameRoutes(app: FastifyInstance) {
       websocket: true,
     },
     async function (conn: SocketStream, req: FastifyRequest) {
+      const { token } = req.query as { token: string };
+      const { sub: userId, name } = app.authService.decodeAuthToken(token);
 
       const { gameId } = req.params as { gameId: string };
-      // TODO Find better way to do not update the same reference
+
+      // TODO Find better way to do not update the game 
       let game;
       game = await app.gameService.findGameById(gameId);
       if (!game) {
         throw new Error('Game not found');
       }
-
-      const random = Math.random()
-      console.log(random)
 
       const broadCastMessage = (message: string) => {
         for (const client of server.clients) {
@@ -79,9 +80,6 @@ export async function gameRoutes(app: FastifyInstance) {
         conn.socket.close();
       }
 
-      // TODO Get user Id from token
-      const userId = 'clqx0nmf200013snrvztckjlp';
-      const userId2 = 'clqx0ej4l00003snr03auyjdj';
       if (
         server.clients.size === 1 &&
         game.hostId !== null &&
@@ -89,28 +87,25 @@ export async function gameRoutes(app: FastifyInstance) {
       ) {
         game = await app.gameService.setGameHost(game, userId);
       } else {
-        game = await app.gameService.setGameGuest(game, userId2);
+        game = await app.gameService.setGameGuest(game, userId);
       }
 
       if (server.clients.size === 2) {
         broadCastMessage('Second player joined, starting game');
         game = await app.gameService.setGameState(game, GameState.STARTED);
         conn.socket.on('message', (message) => {
-          broadCastMessage(random.toString())
-          console.log(server.clients.size)
           const payload = JSON.parse(message.toString());
           switch (payload.type) {
             case 'move':
-              app.gameService.setMove(payload.col, payload.row, payload.value === 0 ? "o" : "x")
+              app.gameService.setMove(payload.col, payload.row);
               break;
             default:
               break;
           }
-          app.gameService.printBoard()
-          broadCastMessage(`Current board: ${JSON.stringify("?", null, 2)}\n`);
+          app.gameService.printBoard();
+          broadCastMessage(`Current board: ${JSON.stringify('?', null, 2)}\n`);
         });
       }
     },
   );
-
 }

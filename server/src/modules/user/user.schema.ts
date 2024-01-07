@@ -21,9 +21,8 @@ const loginSchema = z.object({
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
-export type AuthenticatedResponse = z.infer<typeof authenticatedResponseSchema>
+export type AuthenticatedResponse = z.infer<typeof authenticatedResponseSchema>;
 export type LoginUserInput = z.infer<typeof loginSchema>;
-
 
 export const userSchemas = {
   createUserSchema,

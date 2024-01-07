@@ -17,7 +17,7 @@ declare module 'fastify' {
   }
 }
 
-export type UserPayload = {
+export type AuthTokenPayload = {
   sub: string;
   iss: string;
   email: string;
@@ -25,6 +25,6 @@ export type UserPayload = {
 };
 declare module '@fastify/jwt' {
   interface FastifyJWT {
-    user: UserPayload;
+    user: AuthTokenPayload;
   }
 }

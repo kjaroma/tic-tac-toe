@@ -1,5 +1,15 @@
 # Task: Developing a Tic-Tac-Toe Web App
 
+## Missing parts:
+- Use Zod schema for configuration validation,
+- Improve Websocket client verification using callback,
+- Better game handling,
+- Validate user inputs on auth endpoints,
+- Use Redis to store game partials
+- Make game generic on game create
+- Implement web application
+
+
 ## Description:
 
 Your objective is to create a web application for the classic Tic-Tac-Toe game, featuring a login mechanism and online game initiation. The aim is to deliver a user-friendly and engaging Tic-Tac-Toe experience.

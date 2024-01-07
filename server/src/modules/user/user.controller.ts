@@ -11,11 +11,7 @@ export async function createUser(
   const { email, password, name } = req.body;
   // TODO Validate input
 
-  const payload = await req.server.authService.register(
-    email,
-    password,
-    name,
-  );
+  const payload = await req.server.authService.register(email, password, name);
 
   reply.setCookie('access_token', payload.accessToken, {
     path: '/',
