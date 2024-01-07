@@ -7,14 +7,17 @@ export enum BoardSymbol {
   O = 'o',
 }
 
-export enum GameState {
+export enum GameStatus {
   CREATED = 'created',
   STARTED = 'started',
+  FINISHED = 'finished',
 }
 
-export enum GameMessageTypes {
-  BOARD_CREATED = 'BOARD_CREATED',
-  PLAYER_MOVE = 'PLAYER_MOVE',
+export enum GameMessageType {
+  MOVE = 'move',
+  STATE_UPDATE = 'state_update',
+  FINISH = 'finish',
+  ERROR = 'error',
 }
 
 export enum GameValidationStatus {
@@ -24,7 +27,7 @@ export enum GameValidationStatus {
 }
 
 type GamePosition = {
-  column: number;
+  col: number;
   row: number;
 };
 
@@ -38,12 +41,8 @@ export type GamePlayer = {
   name: string;
 };
 
-type GameData = {
-  id: string;
-  players: {
-    host: GamePlayer;
-    guest: GamePlayer;
-  };
-  winner: string;
-  moves: GameMove;
+export type GameData = {
+  board: Board;
+  winnerId: string;
+  history: GameMove;
 };

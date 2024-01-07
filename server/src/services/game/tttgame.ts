@@ -30,9 +30,10 @@ export type GameState = {
   players: Player[];
   currentPlayerId: string;
   validation: GameValidation;
+  history: GameMove[];
 };
 
-export class Game implements IGame {
+export class TTTGame implements IGame {
   public board: Board = [];
   private validatorService: GameValidator;
   private players: Player[] = [];
@@ -53,11 +54,11 @@ export class Game implements IGame {
     )[0].id;
   }
 
-  private addMoveToHistory(column: number, row: number, playerId: string) {
+  private addMoveToHistory(col: number, row: number, playerId: string) {
     this.history.push({
       playerId,
       position: {
-        column,
+        col,
         row,
       },
     });
@@ -99,7 +100,21 @@ export class Game implements IGame {
       board: this.board,
       players: this.players,
       currentPlayerId: this.currentPlayerId!,
+      history: this.history,
     };
+  }
+
+  private setMove(col: number, row: number) {
+    if (this.players.length < 2) {
+      throw new GameError('Not enough players to start the game', this.gameId);
+    }
+    if (col > this.boardSize - 1 || row > this.boardSize - 1) {
+      throw new GameError('Illegal move for given board size', this.gameId);
+    }
+    if (this.board[col][row] !== null) {
+      throw new GameError('Illegal move, board cell in use', this.gameId);
+    }
+    this.board[col][row] = this.getCurrentPlayer().symbol;
   }
 
   public createBoard(boardSize: number) {
@@ -145,18 +160,5 @@ export class Game implements IGame {
       ...this.getGameState(),
       validation,
     };
-  }
-
-  private setMove(col: number, row: number) {
-    if (this.players.length < 2) {
-      throw new GameError('Not enough players to start the game', this.gameId);
-    }
-    if (col > this.boardSize - 1 || row > this.boardSize - 1) {
-      throw new GameError('Illegal move for given board size', this.gameId);
-    }
-    if (this.board[col][row] !== null) {
-      throw new GameError('Illegal move, board cell in use', this.gameId);
-    }
-    this.board[col][row] = this.getCurrentPlayer().symbol;
   }
 }

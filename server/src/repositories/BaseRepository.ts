@@ -12,7 +12,10 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return await this.model.findUnique({ where: queryOption });
   }
 
-  async update(queryOption: Record<string, unknown>, data: T): Promise<T> {
+  async update(
+    queryOption: Record<string, unknown>,
+    data: Partial<T>,
+  ): Promise<T> {
     return await this.model.update({
       where: queryOption,
       data,

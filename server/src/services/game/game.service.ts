@@ -2,23 +2,23 @@ import { Game } from '@prisma/client';
 import { GameRepository } from '../../repositories/GameRepository';
 import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
-import { Board, GameState } from '../../shared/types';
+import { GameStatus } from '../../shared/types';
+import { IGameService } from '../interfaces/IGameService';
+import { GameState, TTTGame } from './tttgame';
 
-class GameService {
-  private games: Record<string, Board> = {};
+class GameService implements IGameService {
+  private games: Record<string, TTTGame> = {};
 
-  constructor(
-    private readonly gameRepository: GameRepository,
-    private readonly boardSize = 3,
-  ) {}
+  constructor(private readonly gameRepository: GameRepository) {}
 
-  public async setGameHost(game: Game, hostId: string): Promise<Game | never> {
-    const { id, ...data } = game;
+  public async setGameHost(id: string, hostId: string): Promise<Game | never> {
     try {
-      return await this.gameRepository.update({ id }, {
-        ...data,
-        hostId,
-      } as Game);
+      return await this.gameRepository.update(
+        { id },
+        {
+          hostId,
+        },
+      );
     } catch (e) {
       throw new ApiError(
         ErrorMessages.Game.UpdateFailed,
@@ -28,13 +28,11 @@ class GameService {
   }
 
   public async setGameGuest(
-    game: Game,
+    id: string,
     guestId: string,
   ): Promise<Game | never> {
-    const { id, ...data } = game;
     try {
       return await this.gameRepository.update({ id }, {
-        ...data,
         guestId,
       } as Game);
     } catch (e) {
@@ -46,14 +44,26 @@ class GameService {
   }
 
   public async setGameState(
-    game: Game,
-    state: GameState,
+    id: string,
+    state: GameStatus,
   ): Promise<Game | never> {
-    const { id, ...data } = game;
     try {
       return await this.gameRepository.update({ id }, {
-        ...data,
         state,
+      } as Game);
+    } catch (e) {
+      throw new ApiError(
+        ErrorMessages.Game.UpdateFailed,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  public async saveGame(id: string, gameData: Partial<Game>) {
+    try {
+      return await this.gameRepository.update({ id }, {
+        state: GameStatus.FINISHED,
+        winnerId: gameData,
       } as Game);
     } catch (e) {
       throw new ApiError(
@@ -66,7 +76,7 @@ class GameService {
   public async createGame(): Promise<Game | never> {
     try {
       return await this.gameRepository.create({
-        state: GameState.CREATED,
+        state: GameStatus.CREATED,
       } as Game);
     } catch (e) {
       throw new ApiError(
@@ -81,9 +91,26 @@ class GameService {
     return game;
   }
 
-  public createBoard(boardSize: number): void {
-    console.log(boardSize);
-    throw new Error('Not implemented');
+  public async createGameBoard(
+    boardSize: number,
+    gameId: string,
+  ): Promise<void> {
+    // TODO Fetch user names
+    const game = await this.findGameById(gameId);
+    if (game) {
+      this.games[gameId] = new TTTGame(gameId, boardSize);
+      this.games[gameId].addPlayer(game.hostId as string);
+      this.games[gameId].addPlayer(game.guestId as string);
+    }
+  }
+
+  public setBoardMove(
+    gameId: string,
+    col: number,
+    row: number,
+    playerId: string,
+  ): GameState {
+    return this.games[gameId].makeMove(col, row, playerId);
   }
 }
 

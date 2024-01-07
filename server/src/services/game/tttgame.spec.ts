@@ -1,9 +1,9 @@
 import { BoardSymbol, GameValidationStatus } from '../../shared/types';
-import { Game } from './game';
+import { TTTGame } from './tttgame';
 
 describe('game', () => {
   it('should create empty board', () => {
-    const game = new Game('id', 3);
+    const game = new TTTGame('id', 3);
     expect(game.board.length).toBe(3);
     expect(game.board[0].length).toBe(3);
     expect(game.board.flat().length).toBe(9);
@@ -11,7 +11,7 @@ describe('game', () => {
   });
 
   describe('addPlayer', () => {
-    const game = new Game('id', 3);
+    const game = new TTTGame('id', 3);
     it('should add a host player to the game', () => {
       game.addPlayer('player1');
       expect(game['players'].length).toBe(1);
@@ -34,7 +34,7 @@ describe('game', () => {
   });
 
   describe('boardMoves', () => {
-    const game = new Game('id', 3);
+    const game = new TTTGame('id', 3);
     game.addPlayer('pl1');
     game.addPlayer('pl2');
     it('should register moves properly on a board', () => {
@@ -78,6 +78,29 @@ describe('game', () => {
       ],
       currentPlayerId: 'pl2',
       validation: { status: GameValidationStatus.NONE, result: [] },
+      history: [
+        {
+          playerId: 'pl1',
+          position: {
+            col: 0,
+            row: 0,
+          },
+        },
+        {
+          playerId: 'pl2',
+          position: {
+            col: 2,
+            row: 1,
+          },
+        },
+        {
+          playerId: 'pl1',
+          position: {
+            col: 2,
+            row: 2,
+          },
+        },
+      ],
     };
 
     const mockedWinState = {
@@ -96,9 +119,42 @@ describe('game', () => {
         winnerId: 'pl1',
         result: [0, 4, 8],
       },
+      history: [
+        {
+          playerId: 'pl1',
+          position: {
+            col: 0,
+            row: 0,
+          },
+        },        {
+          playerId: 'pl2',
+          position: {
+            col: 2,
+            row: 1,
+          },
+        },        {
+          playerId: 'pl1',
+          position: {
+            col: 2,
+            row: 2,
+          },
+        },        {
+          playerId: 'pl2',
+          position: {
+            col: 0,
+            row: 2,
+          },
+        },        {
+          playerId: 'pl1',
+          position: {
+            col: 1,
+            row: 1,
+          },
+        },
+      ]
     };
 
-    const game = new Game('id', 3);
+    const game = new TTTGame('id', 3);
     game.addPlayer('pl1');
     game.addPlayer('pl2');
     game.makeMove(0, 0, 'pl1');
