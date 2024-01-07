@@ -1,5 +1,5 @@
 import { GameError } from "../../common/errors";
-import { Board, BoardSymbol, BoardValue, GameMove } from "../../shared/types";
+import { Board, BoardSymbol, GameMessageTypes, GameMove, GameValidationStatus } from "../../shared/types";
 import GameValidator from "../gameValidator/gameValidator.service";
 import { IGame } from "../interfaces/IGame";
 
@@ -13,6 +13,19 @@ type Player = {
     id: string;
     symbol: BoardSymbol;
 };
+
+export type GameValidation = {
+    status: GameValidationStatus,
+    winnerId?: string,
+    result: number[]
+}
+
+export type GameState = {
+    board: Board
+    players: Player[],
+    currentPlayerId: string,
+    validation: GameValidation
+}
 
 export class Game implements IGame {
     public board: Board = []
@@ -31,7 +44,7 @@ export class Game implements IGame {
             (pl) => pl.id !== this.currentPlayerId,
         )[0].id;
     }
-    
+
     private addMoveToHistory(column: number, row: number, playerId: string) {
         this.history.push({
             playerId,
@@ -42,8 +55,38 @@ export class Game implements IGame {
         });
     }
 
-    private getCurrentPlayerSymbol() {
-        return this.players.filter(({id}) => id === this.currentPlayerId)[0].symbol
+    private getCurrentPlayer(): Player {
+        return this.players.filter(({ id }) => id === this.currentPlayerId)[0]
+    }
+
+    private validateBoard(): GameValidation {
+        const result = this.validatorService.validate(this.board, this.getCurrentPlayer().symbol);
+        if (result.length) {
+            const id = this.players.find(pl => pl.symbol === this.getCurrentPlayer().symbol)?.id
+            return ({
+                status: GameValidationStatus.WIN,
+                winnerId: id,
+                result
+            })
+        }
+        if (result.length === 0 && this.board.flat().every(el => el !== null)) {
+            return ({
+                status: GameValidationStatus.TIE,
+                result
+            })
+        }
+        return ({
+            status: GameValidationStatus.NONE,
+            result: []
+        })
+    }
+
+    private getGameState(): Omit<GameState, 'validation'> {
+        return ({
+            board: this.board,
+            players: this.players,
+            currentPlayerId: this.currentPlayerId!,
+        })
     }
 
     public createBoard(boardSize: number) {
@@ -72,8 +115,27 @@ export class Game implements IGame {
         }
     }
 
-    public makeMove(col: number, row: number) {
-        if(this.players.length < 2){
+    public makeMove(col: number, row: number, playerId: string): GameState {
+        if(!this.players.some(pl => pl.id === playerId)) {
+            throw new GameError('Unknown player Id', this.gameId)
+        }
+        if(playerId !== this.currentPlayerId) {
+            throw new GameError('It is not your turn now', this.gameId)
+        }
+        this.setMove(col, row)
+        const validation = this.validateBoard()
+        this.addMoveToHistory(col, row, this.currentPlayerId as string);
+        if(validation.status === GameValidationStatus.NONE) {
+            this.swapPlayers();
+        }
+        return ({
+            ...this.getGameState(),
+            validation
+        })
+    }
+
+    private setMove(col: number, row: number) {
+        if (this.players.length < 2) {
             throw new GameError('Not enough players to start the game', this.gameId)
         }
         if (col > this.boardSize - 1 || row > this.boardSize - 1) {
@@ -82,13 +144,7 @@ export class Game implements IGame {
         if (this.board[col][row] !== null) {
             throw new GameError('Illegal move, board cell in use', this.gameId)
         }
-        this.board[col][row] = this.getCurrentPlayerSymbol();
-        this.swapPlayers();
-        this.addMoveToHistory(col, row, this.currentPlayerId as string);
-    }
-
-    public validateBoard(): number[] {
-        return this.validatorService.validate(this.board, BoardSymbol.X);
+        this.board[col][row] = this.getCurrentPlayer().symbol;
     }
 
 }

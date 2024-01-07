@@ -33,19 +33,16 @@ export async function gameRoutes(app: FastifyInstance) {
     },
     async function (connection: SocketStream) {
       const { socket } = connection;
-      const random = Math.random();
       socket.on('message', (message) => {
         app.log.info(message.toString());
         const payload = JSON.parse(message.toString());
         switch (payload.type) {
           case 'move':
-            app.gameService.setMove(payload.col, payload.row);
+            console.log('move')
             break;
           default:
             break;
         }
-        socket.send(random.toString());
-        app.gameService.printBoard();
       });
     },
   );

@@ -17,6 +17,12 @@ export enum GameMessageTypes {
   PLAYER_MOVE = 'PLAYER_MOVE',
 }
 
+export enum GameValidationStatus {
+  NONE = 'none',
+  WIN = 'win',
+  TIE ='tie',
+}
+
 type GamePosition = {
   column: number;
   row: number;

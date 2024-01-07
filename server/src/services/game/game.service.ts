@@ -1,7 +1,5 @@
 import { Game } from '@prisma/client';
 import { GameRepository } from '../../repositories/GameRepository';
-import GameValidator from '../gameValidator/gameValidator.service';
-import { IGameValidatorService } from '../interfaces/IGameValidatorService';
 import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
 import { Board, GameState } from '../../shared/types';
@@ -9,7 +7,6 @@ import { Board, GameState } from '../../shared/types';
 class GameService {
   private games: Record<string, Board> = {};
 
-  // TODO Remove board size hardcoded value
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly boardSize = 3,
@@ -89,8 +86,6 @@ class GameService {
     console.log(boardSize)
     throw new Error('Not implemented')
   }
-
-
 }
 
 export default GameService;
