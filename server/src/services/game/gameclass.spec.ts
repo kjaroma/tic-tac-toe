@@ -4,16 +4,35 @@ import { Game } from './game';
 describe('game', () => {
   it('should create empty board', () => {
     const game = new Game('id', 3);
+    expect(game.board.length).toBe(3);
+    expect(game.board[0].length).toBe(3);
     expect(game.board.flat().length).toBe(9);
     expect(game.board.flat().find((el) => el !== null)).toBeUndefined();
   });
-  it('should throw adding more than 2 players to the game', () => {
+
+  describe('addPlayer', () => {
     const game = new Game('id', 3);
-    game.addPlayer('pl1');
-    game.addPlayer('pl2');
-    expect(game['players'].length).toBe(2);
-    expect(() => game.addPlayer('pl3')).toThrow();
+    it('should add a host player to the game', () => {
+      game.addPlayer('player1');
+      expect(game['players'].length).toBe(1);
+      expect(game['players'][0].id).toBe('player1');
+      expect(game['players'][0].type).toBe('host');
+      expect(game['players'][0].symbol).toBe('x');
+    });
+
+    it('should add a guest player to the game', () => {
+      game.addPlayer('player2');
+      expect(game['players'].length).toBe(2);
+      expect(game['players'][1].id).toBe('player2');
+      expect(game['players'][1].type).toBe('guest');
+      expect(game['players'][1].symbol).toBe('o');
+    });
+
+    it('should throw adding more than 2 players to the game', () => {
+      expect(() => game.addPlayer('pl3')).toThrow();
+    });
   });
+
   describe('boardMoves', () => {
     const game = new Game('id', 3);
     game.addPlayer('pl1');
