@@ -1,3 +1,1 @@
-export interface IGame {
-    
-}
+export interface IGame {}

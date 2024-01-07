@@ -38,7 +38,7 @@ export async function gameRoutes(app: FastifyInstance) {
         const payload = JSON.parse(message.toString());
         switch (payload.type) {
           case 'move':
-            console.log('move')
+            console.log('move');
             break;
           default:
             break;
@@ -58,7 +58,7 @@ export async function gameRoutes(app: FastifyInstance) {
 
       const { gameId } = req.params as { gameId: string };
 
-      // TODO Find better way to do not update the game 
+      // TODO Find better way to do not update the game
       let game;
       game = await app.gameService.findGameById(gameId);
       if (!game) {

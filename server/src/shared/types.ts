@@ -4,7 +4,7 @@ export type Board = (BoardValue | null)[][];
 
 export enum BoardSymbol {
   X = 'x',
-  O = 'o'
+  O = 'o',
 }
 
 export enum GameState {
@@ -20,7 +20,7 @@ export enum GameMessageTypes {
 export enum GameValidationStatus {
   NONE = 'none',
   WIN = 'win',
-  TIE ='tie',
+  TIE = 'tie',
 }
 
 type GamePosition = {

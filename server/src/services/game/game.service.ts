@@ -10,8 +10,7 @@ class GameService {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly boardSize = 3,
-  ) {
-  }
+  ) {}
 
   public async setGameHost(game: Game, hostId: string): Promise<Game | never> {
     const { id, ...data } = game;
@@ -83,8 +82,8 @@ class GameService {
   }
 
   public createBoard(boardSize: number): void {
-    console.log(boardSize)
-    throw new Error('Not implemented')
+    console.log(boardSize);
+    throw new Error('Not implemented');
   }
 }
 
