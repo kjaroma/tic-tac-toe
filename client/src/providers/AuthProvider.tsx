@@ -1,15 +1,11 @@
 import { PropsWithChildren, createContext, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
-
-const fakeAuth = (): Promise<string> =>
-    new Promise((resolve) => {
-        setTimeout(() => resolve('supersecretauttoken'), 250);
-    });
+import { URLS } from "../constants";
 
 export type AuthContextType = {
     token: string | null,
-    onLogin: () => void,
-    onRegister: () => void,
+    onLogin: (email: string, password: string) => void,
+    onRegister: (email: string, name:string, password: string) => void,
     onLogout: () => void
 }
 
@@ -20,21 +16,32 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const handleLogin = async () => {
-        const token = await fakeAuth();
 
-        setToken(token);
-        const origin = location.state?.from?.pathname || '/game';
-        navigate(origin);
-    };
+    const makeAuthRequest = async (email: string, password: string, url: string, name?: string) => {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, name, password }),
+            })
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
 
-    const handleRegister = async () => {
-        const token = await fakeAuth();
+            const data = await response.json();
+            setToken(data.accessToken);
+            const origin = location.state?.from?.pathname || '/game';
+            navigate(origin);
+        } catch (e) {
+            console.error((e as any).message)
+        }
+    }
 
-        setToken(token);
-        const origin = location.state?.from?.pathname || '/game';
-        navigate(origin);
-    };
+    const handleLogin = async (email: string, password: string) => makeAuthRequest(email, password, URLS.login)
+
+    const handleRegister = async (email: string, name:string, password: string) => makeAuthRequest(email, password, URLS.register, name)
 
 
     const handleLogout = () => {

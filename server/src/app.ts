@@ -14,6 +14,7 @@ import { gameRoutes } from './modules/game/game.routes';
 import { registerServices } from './bootstrap/services/services.handler';
 import { errorHandler } from './bootstrap/errors/error.handler';
 import { loadConfig } from './bootstrap/config/config.handler';
+import cors from '@fastify/cors';
 
 export const init = async (
   opts: FastifyServerOptions,
@@ -26,6 +27,7 @@ export const init = async (
   await loadConfig(app);
 
   await app.register(fastifyJWT, { secret: app.config.JWT_SECRET });
+  await app.register(cors);
 
   registerServices(app);
 

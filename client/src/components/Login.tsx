@@ -11,7 +11,7 @@ const Login = () => {
 
   const handleLogin = (e: React.MouseEvent) => {
     e.preventDefault();
-    onLogin()
+    onLogin(email, password)
     if (email && password) {
       setError('');
     } else {
@@ -20,8 +20,9 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full max-w-xs">
+    <div className="w-full max-w-xs mt-6">
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <h2 className="text-2xl font-semibold mb-6">Login</h2>
         {error && <p>{error}</p>}
         <div className='mb-4'>
           <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="email">

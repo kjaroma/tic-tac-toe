@@ -8,6 +8,8 @@ import Login from './components/Login';
 import AuthProvider from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css'
+import Layout from './components/Layout';
+import Register from './components/Register';
 
 
 function App() {
@@ -16,19 +18,22 @@ function App() {
       <AuthProvider>
         <Navigation />
         <Routes>
-          <Route index element={<Game />} />
-          <Route path="login" element={<Login />} />
-          <Route path="game" element={
-            <ProtectedRoute>
-              <Game />
-            </ProtectedRoute>
-          } />
-          <Route path="history" element={
-            <ProtectedRoute>
-              <History />
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<NotFound />} />
+          <Route element={<Layout />}>
+            <Route index element={<Game />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="game" element={
+              <ProtectedRoute>
+                <Game />
+              </ProtectedRoute>
+            } />
+            <Route path="history" element={
+              <ProtectedRoute>
+                <History />
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </div>
