@@ -10,7 +10,7 @@ const Register = () => {
 
   const handleRegister = (e: React.MouseEvent) => {
     e.preventDefault();
-    onLogin()
+    onRegister()
     if (email && password) {
       setError('');
     } else {
