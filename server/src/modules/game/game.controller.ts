@@ -55,6 +55,12 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
     gameService.createGameBoard(3, gameId);
 
     connection.socket.on('message', (message) => {
+      broadCastMessage(
+        JSON.stringify({
+          type: GameMessageType.STATE_UPDATE,
+          payload: { message: message.toString() },
+        }),
+      );
       const payload = JSON.parse(message.toString());
       switch (payload.type as GameMessageType) {
         case GameMessageType.MOVE:
@@ -101,6 +107,4 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
       }
     });
   }
-
-  return null;
 }

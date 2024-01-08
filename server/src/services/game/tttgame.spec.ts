@@ -126,32 +126,36 @@ describe('game', () => {
             col: 0,
             row: 0,
           },
-        },        {
+        },
+        {
           playerId: 'pl2',
           position: {
             col: 2,
             row: 1,
           },
-        },        {
+        },
+        {
           playerId: 'pl1',
           position: {
             col: 2,
             row: 2,
           },
-        },        {
+        },
+        {
           playerId: 'pl2',
           position: {
             col: 0,
             row: 2,
           },
-        },        {
+        },
+        {
           playerId: 'pl1',
           position: {
             col: 1,
             row: 1,
           },
         },
-      ]
+      ],
     };
 
     const game = new TTTGame('id', 3);

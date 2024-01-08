@@ -33,15 +33,10 @@ export async function gameRoutes(app: FastifyInstance) {
     async function (connection: SocketStream) {
       const { socket } = connection;
       socket.on('message', (message) => {
-        app.log.info(message.toString());
-        const payload = JSON.parse(message.toString());
-        switch (payload.type) {
-          case 'move':
-            console.log('move');
-            break;
-          default:
-            break;
+        for (const client of app.websocketServer.clients) {
+          client.send(message.toString());
         }
+        app.log.info(message.toString());
       });
     },
   );
