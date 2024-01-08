@@ -51,60 +51,61 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   if (server.clients.size === 2) {
     broadCastMessage('Second player joined, starting game');
     await gameService.setGameState(gameId, GameStatus.STARTED);
-
     gameService.createGameBoard(3, gameId);
+  }
 
-    connection.socket.on('message', (message) => {
-      broadCastMessage(
-        JSON.stringify({
-          type: GameMessageType.STATE_UPDATE,
-          payload: { message: message.toString() },
-        }),
-      );
-      const payload = JSON.parse(message.toString());
-      switch (payload.type as GameMessageType) {
-        case GameMessageType.MOVE:
-          try {
-            const gameState = gameService.setBoardMove(
-              gameId,
-              payload.col,
-              payload.row,
-              userId,
-            );
-            const { validation, board, history } = gameState;
-            if (
-              validation.status === GameValidationStatus.TIE ||
-              validation.status === GameValidationStatus.WIN
-            ) {
-              gameService.saveGame(gameId, {
-                state: GameStatus.FINISHED,
-                // TODO Handle tie
-                winnerId: validation.winnerId,
-                gameData: { board, history },
-              });
-            }
+  connection.socket.on('message', (message) => {
+    broadCastMessage(
+      JSON.stringify({
+        type: GameMessageType.STATE_UPDATE,
+        payload: { message: message.toString() },
+      }),
+    );
+    const payload = JSON.parse(message.toString());
+    switch (payload.type as GameMessageType) {
+      case GameMessageType.MOVE:
+        try {
+          const gameState = gameService.setBoardMove(
+            gameId,
+            payload.col,
+            payload.row,
+            userId,
+          );
+          const { validation, board, history } = gameState;
+          if (
+            validation.status === GameValidationStatus.TIE ||
+            validation.status === GameValidationStatus.WIN
+          ) {
+            gameService.saveGame(gameId, {
+              state: GameStatus.FINISHED,
+              // TODO Handle tie
+              winnerId: validation.winnerId,
+              gameData: { board, history },
+            });
+          }
+          console.log(gameState)
+          broadCastMessage(
+            JSON.stringify({
+              type: GameMessageType.STATE_UPDATE,
+              payload: { ...gameState },
+            }),
+          );
+        } catch (e) {
+          console.log("Cath!", e)
+          if (e instanceof GameError) {
             broadCastMessage(
               JSON.stringify({
-                type: GameMessageType.STATE_UPDATE,
-                payload: { ...gameState },
+                type: GameMessageType.ERROR,
+                payload: {
+                  message: e.message,
+                },
               }),
             );
-          } catch (e) {
-            if (e instanceof GameError) {
-              broadCastMessage(
-                JSON.stringify({
-                  type: GameMessageType.ERROR,
-                  payload: {
-                    message: e.message,
-                  },
-                }),
-              );
-            }
           }
-          break;
-        default:
-          break;
-      }
-    });
-  }
+        }
+        break;
+      default:
+        break;
+    }
+  });
 }
