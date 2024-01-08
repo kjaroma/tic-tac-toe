@@ -115,3 +115,8 @@ class GameService implements IGameService {
 }
 
 export default GameService;
+
+//ws://localhost:8000/api/games/clqx22lix0000147h1w7wwryb?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHF4MG5tZjIwMDAxM3NucnZ6dGNramxwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2VAZG9lLnBsIiwiaWF0IjoxNzA0NzQwNDQ4fQ.ss3K4jt5q5f6CCo6GkSdyQ4Umv8m9Rwr0QojxLy4krA
+//ws://localhost:8000/api/games/clqx22lix0000147h1w7wwryb?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHF4MGVqNGwwMDAwM3NucjAzYXV5amRqIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2VAZG9lLmRlIiwiaWF0IjoxNzA0NzQwNTM3fQ.EQWnF1bmiN22xao2OlqPK-A-oeCD0g3IIWtH9NTqeYE
+
+//ws://localhost:8000/api/games/clqx22lix0000147h1w7wwryb?token=

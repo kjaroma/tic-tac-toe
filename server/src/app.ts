@@ -15,6 +15,7 @@ import { registerServices } from './bootstrap/services/services.handler';
 import { errorHandler } from './bootstrap/errors/error.handler';
 import { loadConfig } from './bootstrap/config/config.handler';
 import cors from '@fastify/cors';
+import { getCorsOptions } from './bootstrap/cookies';
 
 export const init = async (
   opts: FastifyServerOptions,
@@ -27,7 +28,7 @@ export const init = async (
   await loadConfig(app);
 
   await app.register(fastifyJWT, { secret: app.config.JWT_SECRET });
-  await app.register(cors);
+  await app.register(cors, getCorsOptions);
 
   registerServices(app);
 

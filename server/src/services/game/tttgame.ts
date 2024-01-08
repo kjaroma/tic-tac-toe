@@ -49,6 +49,7 @@ export class TTTGame implements IGame {
   }
 
   private swapPlayers() {
+    console.log(this.players, this.currentPlayerId)
     this.currentPlayerId = this.players.filter(
       (pl) => pl.id !== this.currentPlayerId,
     )[0].id;

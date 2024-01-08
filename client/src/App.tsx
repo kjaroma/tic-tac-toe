@@ -1,15 +1,15 @@
 import './App.css';
-import Game from './components/Game';
-import History from './components/History';
+import Game from './components/pages/Game';
+import History from './components/pages/History';
 import Navigation from './components/Navigation';
 import { Routes, Route } from 'react-router-dom';
-import NotFound from './components/NotFound';
-import Login from './components/Login';
+import NotFound from './components/pages/NotFound';
+import Login from './components/pages/Login';
 import AuthProvider from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css'
 import Layout from './components/Layout';
-import Register from './components/Register';
+import Register from './components/pages/Register';
 
 
 function App() {
