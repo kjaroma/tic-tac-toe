@@ -1,13 +1,20 @@
+import { useState } from "react";
 import Board from "../game/Board";
-import CreateGame from "../game/CreateGame";
+import GameStarter from "../game/GameStarter";
 
 const Game = () => {
-    return (
-      <main style={{ padding: '1rem 0' }}>
-        <CreateGame/>
-        <Board gameId={"clr590yho0000xeuqv9c8im8a"}/>
-      </main>
-    );
-  };
+  const [gameId, setGameId] = useState("")
 
-  export default Game
+  const onGameCreate = (gameId: string) => setGameId(gameId)
+
+  return (
+    <div className="p-12">
+      {gameId
+        ? <Board gameId={gameId} />
+        : <GameStarter onGameCreate={onGameCreate} onGameJoin={onGameCreate} /> 
+      }
+    </div>
+  );
+};
+
+export default Game

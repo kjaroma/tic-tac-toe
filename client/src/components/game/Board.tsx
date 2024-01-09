@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import BoardCell from "./BoardCell"
 import { generate2DArray } from "../../shared/array"
+import GameId from "./GameId"
 
 type BoardProps = {
     gameId: string
@@ -60,6 +61,7 @@ function Board({ gameId }: BoardProps) {
 
     return (
         <div className="flex flex-col justify-center">
+            <GameId gameId={gameId} />
             <div>{connectionStatus}</div>
             <div className="flex flex-col float-start">
                 {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">

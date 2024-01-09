@@ -1,11 +1,10 @@
-import { useRef, useState } from "react"
 import { URLS } from "../../constants"
-import IconCopy from "../icons/Copy";
 
-function CreateGame() {
+type CreateGameProps = {
+  onGameCreate: (gameId: string) => void
+}
 
-  const [gameId, setGameId] = useState("")
-  const gameIdValue = useRef<HTMLInputElement>(null);
+function CreateGame({ onGameCreate }: CreateGameProps) {
 
   const handleGameCreate = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -17,29 +16,15 @@ function CreateGame() {
         throw new Error('Failed to fetch game details');
       }
       const data = await response.json();
-      setGameId(data.gameId)
+      onGameCreate(data.gameId)
     } catch (e) {
       console.error(e)
     }
   }
 
-    const handleCopy = () => {
-    if (gameIdValue.current) {
-      gameIdValue.current.select();
-      navigator.clipboard.writeText(gameIdValue.current.value)
-      // TODO notify on success
-    }
-  };
-
   return (
     <div>
-      <div>
-        <input ref={gameIdValue} value={gameId} readOnly/>
-        <button onClick={handleCopy}>
-          <IconCopy width={"2em"} height={"2em"}/>
-        </button>
-      </div>
-      <button onClick={handleGameCreate}>Crete Game</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={handleGameCreate}>Crete Game</button>
     </div>
   )
 }
