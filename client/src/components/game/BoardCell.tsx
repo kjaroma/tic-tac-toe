@@ -1,12 +1,27 @@
+import IconCircle from "../icons/Circle"
+import IconCross from "../icons/Cross"
+
 type BoardCellProps = {
     onCellClick: (e: React.MouseEvent) => void
     cellValue: string
 }
 
 function BoardCell({ onCellClick, cellValue }: BoardCellProps) {
+
+    const getIcon = (cellValue: string) => {
+        if (cellValue === "x") {
+            return <IconCross width={64} height={64} fill="#3b82f6" />
+        }
+        if (cellValue === "o") {
+            return <IconCircle width={64} height={64} fill="#ffffff" />
+        }
+        return " "
+    }
+
     return (
-        <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold w-24 h-24 border border-gray-400 rounded shadow m-2"
-            onClick={onCellClick}>{cellValue}</button>
+        <div className="bg-gray-800 hover:bg-gray-700 text-gray-100 font-semibold w-24 h-24 border border-gray-900 rounded-lg shadow m-2 flex flex-col justify-center items-center cursor-pointer"
+            onClick={onCellClick}>{getIcon(cellValue)}
+        </div>
     )
 }
 

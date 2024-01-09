@@ -53,7 +53,7 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
             {currentPlayerId === userId ? <h2>Tour turn</h2> : <h4>Not you</h4>}
             <GameId gameId={gameId} />
             <ConnectionStatus readyState={readyState} />
-            <div className="flex flex-col float-start">
+            <div className="flex flex-col float-start bg-gray-900 p-3 rounded-xl">
                 {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">
                     {row.map((_, cIdx) => <BoardCell key={`${cIdx}_${rIdx}`} onCellClick={handleCellClick(cIdx, rIdx)} cellValue={board[cIdx][rIdx] ?? " "} />)}
                 </div>)}
