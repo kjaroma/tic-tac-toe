@@ -18,7 +18,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const location = useLocation();
     const [_, setCookie] = useCookies(['access_token'])
 
-
     const makeAuthRequest = async (email: string, password: string, url: string, name?: string) => {
         try {
             const response = await fetch(url, {
