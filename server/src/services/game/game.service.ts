@@ -59,11 +59,12 @@ class GameService implements IGameService {
     }
   }
 
-  public async saveGame(id: string, gameData: Partial<Game>) {
+  public async saveGame(id: string, data: Partial<Game>) {
+    const {winnerId, hostId, guestId, gameData} = data
     try {
       return await this.gameRepository.update({ id }, {
         state: GameStatus.FINISHED,
-        winnerId: gameData,
+        hostId, guestId, winnerId, gameData
       } as Game);
     } catch (e) {
       throw new ApiError(

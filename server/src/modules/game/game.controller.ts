@@ -64,7 +64,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
             message.payload.row,
             userId,
           );
-          const { validation, board, history } = state;
+          const { validation, board, history, players } = state;
           if (
             validation.status === GameValidationStatus.TIE ||
             validation.status === GameValidationStatus.WIN
@@ -72,6 +72,9 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
             gameService.saveGame(gameId, {
               state: GameStatus.FINISHED,
               // TODO Handle tie
+              // TODO Refactor this 
+              hostId: players.find(pl => pl.type === 'host')?.id ?? null,
+              guestId: players.find(pl => pl.type === 'guest')?.id ?? null,
               winnerId: validation.winnerId,
               gameData: { board, history },
             });
@@ -79,7 +82,11 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
           messageService.emitStateMessage(state);
         } catch (e) {
           if (e instanceof GameError) {
+            if(e.message === 'It is not your turn now')
+            connection.socket.send(messageService.getInfoMessage(e.message))
+          else {
             messageService.emitErrorMessage(e.message);
+          }
           } else {
             throw e;
           }
