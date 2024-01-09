@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 
 const Navigation = () => {
 
-  const { token, onLogout } = useAuth()
+  const { userAuthData, onLogout } = useAuth()
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -12,7 +12,7 @@ const Navigation = () => {
         <div className="space-x-4">
           <Link className="text-white" to="/game">Game</Link>
           <Link className="text-white" to="/history">History</Link>
-          {token ? (
+          {userAuthData.accessToken ? (
             <button className="text-white" type="button" onClick={onLogout}>
               Sign Out
             </button>

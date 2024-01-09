@@ -3,8 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { URLS } from "../constants";
 import { useCookies } from "react-cookie";
 
+export type UserAuthData = {
+    accessToken: string | null,
+    userId: string | null,
+    name: string | null,
+}
+
 export type AuthContextType = {
-    token: string | null,
+    userAuthData: UserAuthData, 
     onLogin: (email: string, password: string) => void,
     onRegister: (email: string, name:string, password: string) => void,
     onLogout: () => void
@@ -13,7 +19,7 @@ export type AuthContextType = {
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-    const [token, setToken] = useState<string | null>(null);
+    const [userAuthData, setUserAuthData] = useState<UserAuthData>({} as UserAuthData);
     const navigate = useNavigate();
     const location = useLocation();
     const [_, setCookie] = useCookies(['access_token'])
@@ -30,9 +36,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
             if (!response.ok) {
                 throw new Error('Invalid credentials');
             }
-
             const data = await response.json();
-            setToken(data.accessToken);
+            setUserAuthData(data)
             setCookie('access_token', data.accessToken)
             const origin = location.state?.from?.pathname || '/game';
             navigate(origin);
@@ -47,11 +52,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
 
     const handleLogout = () => {
-        setToken(null);
+        setUserAuthData({} as UserAuthData);
     };
 
     const value = {
-        token,
+        userAuthData,
         onLogin: handleLogin,
         onRegister: handleRegister,
         onLogout: handleLogout,

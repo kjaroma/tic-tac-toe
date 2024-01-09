@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Board from "../game/Board";
 import GameStarter from "../game/GameStarter";
+import TicTacToeBoard from "../game/TicTacToeBoard";
 
 const Game = () => {
   const [gameId, setGameId] = useState("")
@@ -10,7 +10,7 @@ const Game = () => {
   return (
     <div className="p-12">
       {gameId
-        ? <Board gameId={gameId} />
+        ? <TicTacToeBoard gameId={gameId} />
         : <GameStarter onGameCreate={onGameCreate} onGameJoin={onGameCreate} /> 
       }
     </div>

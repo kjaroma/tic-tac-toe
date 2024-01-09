@@ -3,10 +3,10 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const ProtectedRoute = ({ children }: PropsWithChildren) => {
-    const { token } = useAuth();
+    const { accessToken } = useAuth().userAuthData;
     const location = useLocation();
   
-    if (!token) {
+    if (!accessToken) {
       return <Navigate to="/login" replace  state={{ from: location }}/>;
     }
   

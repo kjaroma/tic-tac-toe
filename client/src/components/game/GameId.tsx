@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import IconCopy from "../icons/Copy";
 
 type GameIdProps = {
