@@ -3,10 +3,10 @@ type BoardCellProps = {
     cellValue: string
 }
 
-
 function BoardCell({ onCellClick, cellValue }: BoardCellProps) {
     return (
-        <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold w-24 h-24 border border-gray-400 rounded shadow" onClick={onCellClick}>{cellValue}</button>
+        <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold w-24 h-24 border border-gray-400 rounded shadow m-2"
+            onClick={onCellClick}>{cellValue}</button>
     )
 }
 

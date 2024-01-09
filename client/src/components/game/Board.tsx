@@ -3,6 +3,7 @@ import { URLS } from "../../constants"
 import { useEffect, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import BoardCell from "./BoardCell"
+import { generate2DArray } from "../../shared/array"
 
 type BoardProps = {
     gameId: string
@@ -11,18 +12,12 @@ type BoardProps = {
 function Board({ gameId }: BoardProps) {
     const { token } = useAuth()
 
-    const generate2DArray = (size: number, defaultValue: " "): string[][] =>
-        Array.from({ length: size }, () =>
-            Array.from({ length: size }, () => defaultValue),
-        );
-
     const [board, setBoard] = useState(generate2DArray(3, " "))
-
 
     const url = `${URLS.joinGame}${gameId}?token=${token}`
     const { sendMessage, lastMessage, readyState } = useWebSocket(url, { share: false })
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
-
+    const [moveHistory, setMoveHistory] = useState<string[]>([]);
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -30,16 +25,18 @@ function Board({ gameId }: BoardProps) {
             switch (message.type) {
                 case 'state_update':
                     setBoard(message.payload.state.board)
-                     console.log(message.payload)
+                    console.log(message.payload)
+                    setMoveHistory(message.payload.state?.history ?? [])
+                    break
+                case 'info':
+                    setMessageHistory((prev) => prev.concat(message.payload.message as unknown as string));
                     break
                 default:
                     break;
             }
-            setMessageHistory((prev) => prev.concat(lastMessage as unknown as string));
         }
-
+ 
     }, [lastMessage])
-
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -58,24 +55,20 @@ function Board({ gameId }: BoardProps) {
                     col, row
                 }
             }))
-            console.log("Clicked", col, row)
         }
     }
 
-
-    // TODO use gameState
-
-    // )
     return (
-        <>
+        <div className="flex flex-col justify-center">
             <div>{connectionStatus}</div>
-            <div>
-                {board.map((row, rIdx) => <div key={rIdx}>{row.map((_, cIdx) => <BoardCell key={`${cIdx}_${rIdx}`} onCellClick={handleCellClick(cIdx, rIdx)} cellValue={board[cIdx][rIdx]} />)}</div>)}
+            <div className="flex flex-col float-start">
+                {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">
+                    {row.map((_, cIdx) => <BoardCell key={`${cIdx}_${rIdx}`} onCellClick={handleCellClick(cIdx, rIdx)} cellValue={board[cIdx][rIdx]} />)}
+                </div>)}
             </div>
-            <>
-                {messageHistory.map((m, i) => <div key={i}>{JSON.stringify((m as any).data)}</div>)}
-            </>
-        </>
+            {moveHistory.map((m, i) => <div className="text-xs" key={i}>{JSON.stringify((m as any).data)}</div>)}
+            {messageHistory.map((m, i) => <div className="text-xs" key={i}>{JSON.stringify((m as any).data)}</div>)}
+        </div>
     )
 }
 
