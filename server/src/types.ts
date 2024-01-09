@@ -3,6 +3,7 @@ import { UserService } from './services/user/user.service';
 import { AuthService } from './services/auth/auth.service';
 import { AppConfigType } from './bootstrap/config/config.schema';
 import GameService from './services/game/game.service';
+import MessageService from './services/message/message.service';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -13,6 +14,7 @@ declare module 'fastify' {
     userService: UserService;
     authService: AuthService;
     gameService: GameService;
+    messageService: MessageService;
     authenticate: (req: FastifyRequest) => void;
   }
 }

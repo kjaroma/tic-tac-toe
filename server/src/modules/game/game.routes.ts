@@ -1,4 +1,4 @@
-import fastifyWebsocket, { SocketStream } from '@fastify/websocket';
+import fastifyWebsocket from '@fastify/websocket';
 import { FastifyInstance } from 'fastify';
 import { createGame, playGame } from './game.controller';
 import { $ref } from '../../bootstrap/schemas/schemas.handler';
@@ -23,22 +23,6 @@ export async function gameRoutes(app: FastifyInstance) {
       preHandler: [app.authenticate],
     },
     createGame,
-  );
-
-  app.get(
-    '/test',
-    {
-      websocket: true,
-    },
-    async function (connection: SocketStream) {
-      const { socket } = connection;
-      socket.on('message', (message) => {
-        for (const client of app.websocketServer.clients) {
-          client.send(message.toString());
-        }
-        app.log.info(message.toString());
-      });
-    },
   );
 
   app.get(

@@ -15,6 +15,7 @@ export enum GameStatus {
 
 export enum GameMessageType {
   MOVE = 'move',
+  INFO = 'info',
   STATE_UPDATE = 'state_update',
   FINISH = 'finish',
   ERROR = 'error',
