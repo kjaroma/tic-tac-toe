@@ -10,7 +10,7 @@ const Game = () => {
   return (
     <div className="p-12">
       {gameId
-        ? <TicTacToeBoard gameId={gameId} />
+        ? <TicTacToeBoard gameId={"clr6t7m83000144cuq1szvqhc"} />
         : <GameStarter onGameCreate={onGameCreate} onGameJoin={onGameCreate} /> 
       }
     </div>

@@ -1,18 +1,19 @@
-import useWebSocket, { ReadyState } from "react-use-websocket"
+import useWebSocket from "react-use-websocket"
 import { URLS } from "../../constants"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import BoardCell from "./BoardCell"
 import GameId from "./GameId"
 import useGame from "../../hooks/useGame"
+import ConnectionStatus from "./ConnectionStatus"
 
-type BoardProps = {
+type TicTacToeBoardProps = {
     gameId: string
-}
+} 
 
-function TicTacToeBoard({ gameId }: BoardProps) {
+function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
     const { accessToken, userId, name } = useAuth().userAuthData ?? {}
-    const { currentPlayerId, board, history, log, setGameState, storeInfoMessage } = useGame()
+    const { currentPlayerId, board, history, setGameState  } = useGame()
 
     const url = `${URLS.joinGame}${gameId}?token=${accessToken}`
     const { sendMessage, lastMessage, readyState } = useWebSocket(url, { share: false })
@@ -25,22 +26,14 @@ function TicTacToeBoard({ gameId }: BoardProps) {
                     setGameState(message.payload.state)
                     break
                 case 'info':
-                    storeInfoMessage(message.payload.message as unknown as string)
+                    // TODO Handle log
                     break
                 default:
                     break;
             }
         }
 
-    }, [lastMessage, setGameState, storeInfoMessage])
-
-    const connectionStatus = {
-        [ReadyState.CONNECTING]: 'Connecting',
-        [ReadyState.OPEN]: 'Open',
-        [ReadyState.CLOSING]: 'Closing',
-        [ReadyState.CLOSED]: 'Closed',
-        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-    }[readyState];
+    }, [lastMessage, setGameState ])
 
     const handleCellClick = (col: number, row: number) => {
         return (e: React.MouseEvent) => {
@@ -59,14 +52,13 @@ function TicTacToeBoard({ gameId }: BoardProps) {
             <p>{name}{userId}</p>
             {currentPlayerId === userId ? <h2>Tour turn</h2> : <h4>Not you</h4>}
             <GameId gameId={gameId} />
-            <div>{connectionStatus}</div>
+            <ConnectionStatus readyState={readyState} />
             <div className="flex flex-col float-start">
                 {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">
                     {row.map((_, cIdx) => <BoardCell key={`${cIdx}_${rIdx}`} onCellClick={handleCellClick(cIdx, rIdx)} cellValue={board[cIdx][rIdx] ?? " "} />)}
                 </div>)}
             </div>
             {history.map((m, i) => <div className="text-xs" key={i}>{JSON.stringify((m as any).data)}</div>)}
-            {log.map((m, i) => <div className="text-xs" key={i}>{JSON.stringify((m as any).data)}</div>)}
             {JSON.stringify(currentPlayerId)}
         </div>
     )

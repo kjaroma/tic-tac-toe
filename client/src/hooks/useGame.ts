@@ -16,20 +16,14 @@ const useGameInitialState: GameState = {
 function useGame() {
 
     const [gameState, setGameState] = useState<GameState>(useGameInitialState)
-    const [log, setLog] = useState<string[]>([])
 
     const {currentPlayerId, board, history, validation} = gameState
-    const storeInfoMessage = (message: string) => {
-        setLog((log) => log.concat(message))
-    }
 
     return ({
-        storeInfoMessage,
         setGameState,
         currentPlayerId,
         board,
         history,
-        log,
         validation
         }
     )
