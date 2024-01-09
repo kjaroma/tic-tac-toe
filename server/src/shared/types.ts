@@ -47,3 +47,28 @@ export type GameData = {
   winnerId: string;
   history: GameMove;
 };
+
+export enum PlayerType {
+  HOST = 'host',
+  GUEST = 'guest',
+}
+
+export type Player = {
+  type: PlayerType;
+  id: string;
+  symbol: BoardSymbol;
+};
+
+export type GameValidation = {
+  status: GameValidationStatus;
+  winnerId?: string;
+  result: number[];
+};
+
+export type GameState = {
+  board: Board;
+  players: Player[];
+  currentPlayerId: string;
+  validation: GameValidation;
+  history: GameMove[];
+};

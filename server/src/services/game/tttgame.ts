@@ -1,37 +1,16 @@
+import { PlayerType } from './../../shared/types';
 import { GameError } from '../../common/errors';
 import {
   Board,
   BoardSymbol,
   GameMove,
+  GameState,
+  GameValidation,
   GameValidationStatus,
+  Player,
 } from '../../shared/types';
 import GameValidator from '../gameValidator/gameValidator.service';
 import { IGame } from '../interfaces/IGame';
-
-enum PlayerType {
-  HOST = 'host',
-  GUEST = 'guest',
-}
-
-type Player = {
-  type: PlayerType;
-  id: string;
-  symbol: BoardSymbol;
-};
-
-export type GameValidation = {
-  status: GameValidationStatus;
-  winnerId?: string;
-  result: number[];
-};
-
-export type GameState = {
-  board: Board;
-  players: Player[];
-  currentPlayerId: string;
-  validation: GameValidation;
-  history: GameMove[];
-};
 
 export class TTTGame implements IGame {
   public board: Board = [];

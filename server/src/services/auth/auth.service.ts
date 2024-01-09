@@ -78,6 +78,8 @@ export class AuthService implements IAuthService {
     };
     return {
       accessToken: this.jwt.sign(payload),
+      userId: id,
+      name,
     };
   }
 }

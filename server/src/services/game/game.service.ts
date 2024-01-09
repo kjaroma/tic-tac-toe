@@ -2,9 +2,9 @@ import { Game } from '@prisma/client';
 import { GameRepository } from '../../repositories/GameRepository';
 import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
-import { GameStatus } from '../../shared/types';
+import { GameState, GameStatus } from '../../shared/types';
 import { IGameService } from '../interfaces/IGameService';
-import { GameState, TTTGame } from './tttgame';
+import { TTTGame } from './tttgame';
 
 class GameService implements IGameService {
   private games: Record<string, TTTGame> = {};
@@ -110,7 +110,7 @@ class GameService implements IGameService {
   public addGamePlayer(gameId: string, playerId: string) {
     this.games[gameId].addPlayer(playerId);
   }
-
+ 
   public setBoardMove(
     gameId: string,
     col: number,
