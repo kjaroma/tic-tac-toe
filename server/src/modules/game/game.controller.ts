@@ -47,6 +47,11 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
     messageService.emitInfoMessage('Second player joined, starting game');
     await gameService.setGameState(gameId, GameStatus.STARTED);
   }
+
+  connection.socket.on('close', () => {
+    // TODO remove player from game.
+  })
+
   connection.socket.on('message', (rawMessage) => {
     const message = JSON.parse(rawMessage.toString());
     switch (message.type as GameMessageType) {
