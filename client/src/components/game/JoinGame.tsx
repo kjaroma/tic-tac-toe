@@ -17,10 +17,10 @@ const GameJoin = ({ onGameJoin }: GameJoinProps) => {
     }
 
     return (
-    <div className="flex flex-row">
-        <input className="shadow border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            value={gameId} onChange={handleChange} />
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={handleClick}>Join Game</button>
+    <div className="flex flex-col">
+        <input className="shadow border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            value={gameId} onChange={handleChange} placeholder="Paste game Id"/>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={handleClick}>Join Existing Game</button>
     </div>
     )
 }

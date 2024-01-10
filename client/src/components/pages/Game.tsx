@@ -8,9 +8,9 @@ const Game = () => {
   const onGameCreate = (gameId: string) => setGameId(gameId)
 
   return (
-    <div className="p-12">
+    <div className="flex flex-col items-center p-12">
       {gameId
-        ? <TicTacToeBoard gameId={"clr6t7m83000144cuq1szvqhc"} />
+        ? <TicTacToeBoard gameId={gameId} />
         : <GameStarter onGameCreate={onGameCreate} onGameJoin={onGameCreate} /> 
       }
     </div>
