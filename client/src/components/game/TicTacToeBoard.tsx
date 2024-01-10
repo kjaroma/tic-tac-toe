@@ -25,7 +25,6 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
             const message = JSON.parse(lastMessage.data)
             switch (message.type) {
                 case 'state_update':
-                    console.log(message.payload.state)
                     setGameState(message.payload.state)
                     break
                 case 'info':

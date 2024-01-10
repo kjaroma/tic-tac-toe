@@ -6,7 +6,6 @@ const Navigation = () => {
   const { userAuthData, onLogout } = useAuth()
   const {pathname} = useLocation()
 
-  console.log(pathname)
   if(pathname.match(/^(\/login|\/register)$/)) {
 
     return null
