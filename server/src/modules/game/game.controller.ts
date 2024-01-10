@@ -20,7 +20,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   const server = req.server.websocketServer;
   const messageService = new MessageService(server);
 
-  const { sub: userId } = authService.decodeAuthToken(token);
+  const { sub: playerId, name } = authService.decodeAuthToken(token);
   const { gameId } = req.params as { gameId: string };
 
   const game = await gameService.findGameById(gameId);
@@ -37,17 +37,11 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   }
 
   gameService.createGameBoard(3, gameId);
-  gameService.addGamePlayer(gameId, userId);
-
-  // if (
-  //   server.clients.size === 1 &&
-  //   game.hostId !== null &&
-  //   game.hostId !== userId
-  // ) {
-  //   await gameService.setGameHost(gameId, userId);
-  // } else {
-  //   await gameService.setGameGuest(gameId, userId);
-  // }
+  const state = gameService.addGamePlayer(gameId, playerId, name ?? '-');
+  if (state && server.clients.size === 2) {
+    // TODO Sometimes player misses state update
+    messageService.emitStateMessage(state);
+  }
 
   if (server.clients.size === 2) {
     messageService.emitInfoMessage('Second player joined, starting game');
@@ -62,7 +56,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
             gameId,
             message.payload.col,
             message.payload.row,
-            userId,
+            playerId,
           );
           const { validation, board, history, players } = state;
           if (
@@ -72,9 +66,9 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
             gameService.saveGame(gameId, {
               state: GameStatus.FINISHED,
               // TODO Handle tie
-              // TODO Refactor this 
-              hostId: players.find(pl => pl.type === 'host')?.id ?? null,
-              guestId: players.find(pl => pl.type === 'guest')?.id ?? null,
+              // TODO Refactor this
+              hostId: players.find((pl) => pl.type === 'host')?.id ?? null,
+              guestId: players.find((pl) => pl.type === 'guest')?.id ?? null,
               winnerId: validation.winnerId,
               gameData: { board, history },
             });
@@ -82,11 +76,11 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
           messageService.emitStateMessage(state);
         } catch (e) {
           if (e instanceof GameError) {
-            if(e.message === 'It is not your turn now')
-            connection.socket.send(messageService.getInfoMessage(e.message))
-          else {
-            messageService.emitErrorMessage(e.message);
-          }
+            if (e.message === 'It is not your turn now')
+              connection.socket.send(messageService.getInfoMessage(e.message));
+            else {
+              messageService.emitErrorMessage(e.message);
+            }
           } else {
             throw e;
           }

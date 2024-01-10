@@ -10,7 +10,7 @@ const authenticatedResponseSchema = z.object({
   accessToken: z.string(),
   userId: z.string(),
   name: z.string().nullable(),
-}); 
+});
 
 const loginSchema = z.object({
   email: z
@@ -31,5 +31,3 @@ export const userSchemas = {
   loginSchema,
   authenticatedResponseSchema,
 };
-
-

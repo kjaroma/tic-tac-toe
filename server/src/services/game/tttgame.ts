@@ -102,23 +102,29 @@ export class TTTGame implements IGame {
     );
   }
 
-  public addPlayer(id: string) {
+  public addPlayer(id: string, name: string): GameState | undefined {
     if (this.players.length >= 2) {
       throw new GameError('Too many players', this.gameId);
     }
     if (this.players.length === 0) {
       this.players.push({
         type: PlayerType.HOST,
+        name,
         id,
         symbol: BoardSymbol.X,
       });
     } else {
       this.players.push({
         type: PlayerType.GUEST,
+        name,
         id,
         symbol: BoardSymbol.O,
       });
       this.currentPlayerId = this.players[0].id;
+      return {
+        ...this.getGameState(),
+        validation: { status: GameValidationStatus.NONE, result: [] },
+      };
     }
   }
 

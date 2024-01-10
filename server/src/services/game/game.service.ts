@@ -60,11 +60,14 @@ class GameService implements IGameService {
   }
 
   public async saveGame(id: string, data: Partial<Game>) {
-    const {winnerId, hostId, guestId, gameData} = data
+    const { winnerId, hostId, guestId, gameData } = data;
     try {
       return await this.gameRepository.update({ id }, {
         state: GameStatus.FINISHED,
-        hostId, guestId, winnerId, gameData
+        hostId,
+        guestId,
+        winnerId,
+        gameData,
       } as Game);
     } catch (e) {
       throw new ApiError(
@@ -96,21 +99,19 @@ class GameService implements IGameService {
     boardSize: number,
     gameId: string,
   ): Promise<void> {
-    // TODO Fetch user names
-    // const game = await this.findGameById(gameId);
-    // if (game) {
     if (!this.games[gameId]) {
       this.games[gameId] = new TTTGame(gameId, boardSize);
     }
-    // this.games[gameId].addPlayer(game.hostId as string);
-    // this.games[gameId].addPlayer(game.guestId as string);
-    // }
   }
 
-  public addGamePlayer(gameId: string, playerId: string) {
-    this.games[gameId].addPlayer(playerId);
+  public addGamePlayer(
+    gameId: string,
+    playerId: string,
+    playerName: string,
+  ): GameState | undefined {
+    return this.games[gameId].addPlayer(playerId, playerName);
   }
- 
+
   public setBoardMove(
     gameId: string,
     col: number,
