@@ -1,9 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Navigation = () => {
 
   const { userAuthData, onLogout } = useAuth()
+  const {pathname} = useLocation()
+
+  console.log(pathname)
+  if(pathname.match(/^(\/login|\/register)$/)) {
+
+    return null
+  }
 
   return (
     <nav className="bg-gray-800 p-4">
