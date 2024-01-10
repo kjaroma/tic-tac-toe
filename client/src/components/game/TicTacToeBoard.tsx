@@ -6,14 +6,16 @@ import BoardCell from "./BoardCell"
 import GameId from "./GameId"
 import useGame from "../../hooks/useGame"
 import ConnectionStatus from "./ConnectionStatus"
+import Profiles from "./Profiles"
+import GameStatusComponent from "./GameStatusComponent"
 
 type TicTacToeBoardProps = {
     gameId: string
-} 
+}
 
 function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
-    const { accessToken, userId, name } = useAuth().userAuthData ?? {}
-    const { currentPlayerId, board, history, setGameState  } = useGame()
+    const { accessToken } = useAuth().userAuthData ?? {}
+    const { currentPlayerId, board, history, validation, players, setGameState } = useGame()
 
     const url = `${URLS.joinGame}${gameId}?token=${accessToken}`
     const { sendMessage, lastMessage, readyState } = useWebSocket(url, { share: false })
@@ -23,6 +25,7 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
             const message = JSON.parse(lastMessage.data)
             switch (message.type) {
                 case 'state_update':
+                    console.log(message.payload.state)
                     setGameState(message.payload.state)
                     break
                 case 'info':
@@ -33,7 +36,7 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
             }
         }
 
-    }, [lastMessage, setGameState ])
+    }, [lastMessage, setGameState])
 
     const handleCellClick = (col: number, row: number) => {
         return (e: React.MouseEvent) => {
@@ -46,20 +49,20 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
             }))
         }
     }
-
+ 
     return (
-        <div className="flex flex-col justify-center">
-            <p>{name}{userId}</p>
-            {currentPlayerId === userId ? <h2>Tour turn</h2> : <h4>Not you</h4>}
-            <GameId gameId={gameId} />
-            <ConnectionStatus readyState={readyState} />
-            <div className="flex flex-col float-start bg-gray-900 p-3 rounded-xl">
+        <div className="flex flex-col justify-center sm:flex-row bg-gray-5000">
+            <div className="flex flex-col justify-center items-center bg-gray-900 p-4 rounded-xl">
                 {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">
                     {row.map((_, cIdx) => <BoardCell key={`${cIdx}_${rIdx}`} onCellClick={handleCellClick(cIdx, rIdx)} cellValue={board[cIdx][rIdx] ?? " "} />)}
                 </div>)}
             </div>
-            {history.map((m, i) => <div className="text-xs" key={i}>{JSON.stringify((m as any).data)}</div>)}
-            {JSON.stringify(currentPlayerId)}
+            <div className="p-6 w-96">
+                <GameId gameId={gameId} />
+                <ConnectionStatus readyState={readyState} />
+                <Profiles players={players} currentPlayerId={currentPlayerId} />
+                <GameStatusComponent validation={validation} players={players} currentPlayerId={currentPlayerId} />
+            </div>
         </div>
     )
 }

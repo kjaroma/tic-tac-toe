@@ -55,6 +55,7 @@ enum PlayerType {
 
 export type Player = {
   type: PlayerType;
+  name: string;
   id: string;
   symbol: BoardSymbol;
 };

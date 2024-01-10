@@ -17,14 +17,15 @@ function useGame() {
 
     const [gameState, setGameState] = useState<GameState>(useGameInitialState)
 
-    const {currentPlayerId, board, history, validation} = gameState
+    const {currentPlayerId, board, history, validation, players} = gameState
 
     return ({
         setGameState,
         currentPlayerId,
         board,
         history,
-        validation
+        validation,
+        players
         }
     )
 }

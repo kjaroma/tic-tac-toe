@@ -12,14 +12,14 @@ const GameId = ({ gameId }: GameIdProps) => {
         if (gameIdValue.current) {
             gameIdValue.current.select();
             navigator.clipboard.writeText(gameIdValue.current.value)
-            // TODO notify on success
+            alert("Game Id copied")
         }
     };
-    return (<div>
-        <input className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            ref={gameIdValue} value={gameId} readOnly />
-        <button onClick={handleCopy}>
-            <IconCopy width={"2em"} height={"2em"} />
+    return (
+    <div className="flex flex-row items-center justify-center bg-gray-700 p-1 rounded-lg">
+        <input className="focus:outline-none border-none bg-gray-700 border border-gray-700 text-gray-900 rounded-lg focus:ring-gray-700 focus:border-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500 text-sm flex-grow" ref={gameIdValue} value={gameId} readOnly />
+        <button onClick={handleCopy} className="pr-2">
+            <IconCopy width={"1.5em"} height={"1.5em"} fill="#d1d5db" />
         </button>
     </div>
     )
