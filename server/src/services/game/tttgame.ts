@@ -11,6 +11,7 @@ import {
 } from '../../shared/types';
 import GameValidator from '../gameValidator/gameValidator.service';
 import { IGame } from '../interfaces/IGame';
+import { generate2DArray } from '../../utils/array';
 
 export class TTTGame implements IGame {
   public board: Board = [];
@@ -97,9 +98,7 @@ export class TTTGame implements IGame {
   }
 
   public createBoard(boardSize: number) {
-    this.board = Array.from({ length: boardSize }, () =>
-      Array.from({ length: boardSize }, () => null),
-    );
+    this.board = generate2DArray(boardSize, null)
   }
 
   public addPlayer(id: string, name: string): GameState | undefined {

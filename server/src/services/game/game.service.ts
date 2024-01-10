@@ -11,6 +11,24 @@ class GameService implements IGameService {
 
   constructor(private readonly gameRepository: GameRepository) {}
 
+  public async createGame(): Promise<Game | never> {
+    try {
+      return await this.gameRepository.create({
+        state: GameStatus.CREATED,
+      } as Game);
+    } catch (e) {
+      throw new ApiError(
+        ErrorMessages.Game.CreationFailed,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  public async findGameById(id: string): Promise<Game | null> {
+    const game = await this.gameRepository.findUnique({ id });
+    return game;
+  }
+
   public async setGameHost(id: string, hostId: string): Promise<Game | never> {
     try {
       return await this.gameRepository.update(
@@ -76,25 +94,6 @@ class GameService implements IGameService {
       );
     }
   }
-
-  public async createGame(): Promise<Game | never> {
-    try {
-      return await this.gameRepository.create({
-        state: GameStatus.CREATED,
-      } as Game);
-    } catch (e) {
-      throw new ApiError(
-        ErrorMessages.Game.CreationFailed,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  public async findGameById(id: string): Promise<Game | null> {
-    const game = await this.gameRepository.findUnique({ id });
-    return game;
-  }
-
   public async createGameBoard(
     boardSize: number,
     gameId: string,
