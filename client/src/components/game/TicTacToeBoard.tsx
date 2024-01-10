@@ -63,7 +63,7 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
 
                 </div>)}
             </div>
-            <div className="p-6 w-96">
+            <div className="pt-6 px-6 w-96">
                 <GameId gameId={gameId} />
                 <ConnectionStatus readyState={readyState} />
                 <Profiles players={players} currentPlayerId={currentPlayerId} />
