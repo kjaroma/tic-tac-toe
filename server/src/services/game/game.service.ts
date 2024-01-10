@@ -15,6 +15,7 @@ class GameService implements IGameService {
     try {
       return await this.gameRepository.create({
         state: GameStatus.CREATED,
+        boardSize: 3,
       } as Game);
     } catch (e) {
       throw new ApiError(
