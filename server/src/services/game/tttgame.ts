@@ -98,7 +98,7 @@ export class TTTGame implements IGame {
   }
 
   public createBoard(boardSize: number) {
-    this.board = generate2DArray(boardSize, null)
+    this.board = generate2DArray(boardSize, null);
   }
 
   public addPlayer(id: string, name: string): GameState | undefined {

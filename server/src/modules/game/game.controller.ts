@@ -50,7 +50,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
 
   connection.socket.on('close', () => {
     // TODO remove player from game.
-  })
+  });
 
   connection.socket.on('message', (rawMessage) => {
     const message = JSON.parse(rawMessage.toString());
