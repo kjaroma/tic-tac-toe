@@ -12,6 +12,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Game" (
     "id" TEXT NOT NULL,
     "state" TEXT NOT NULL,
+    "boardSize" INTEGER NOT NULL,
     "hostId" TEXT,
     "guestId" TEXT,
     "winnerId" TEXT,

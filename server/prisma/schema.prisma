@@ -20,12 +20,13 @@ model User {
 }
 
 model Game {
-  id       String  @id @default(cuid())
-  state    String
-  host     User?   @relation(name: "host", fields: [hostId], references: [id])
-  hostId   String?
-  guest    User?   @relation(name: "guest", fields: [guestId], references: [id])
-  guestId  String?
-  winnerId String?
-  gameData Json?
+  id        String  @id @default(cuid())
+  state     String
+  boardSize Int
+  host      User?   @relation(name: "host", fields: [hostId], references: [id])
+  hostId    String?
+  guest     User?   @relation(name: "guest", fields: [guestId], references: [id])
+  guestId   String?
+  winnerId  String?
+  gameData  Json?
 }
