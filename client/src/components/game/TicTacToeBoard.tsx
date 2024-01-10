@@ -15,7 +15,7 @@ type TicTacToeBoardProps = {
 
 function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
     const { accessToken } = useAuth().userAuthData ?? {}
-    const { currentPlayerId, board, history, validation, players, setGameState } = useGame()
+    const { currentPlayerId, board, validation, players, setGameState, isHighlighted } = useGame()
 
     const url = `${URLS.joinGame}${gameId}?token=${accessToken}`
     const { sendMessage, lastMessage, readyState } = useWebSocket(url, { share: false })
@@ -35,7 +35,7 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
                     break;
             }
         }
-
+  
     }, [lastMessage, setGameState])
 
     const handleCellClick = (col: number, row: number) => {
@@ -48,13 +48,19 @@ function TicTacToeBoard({ gameId }: TicTacToeBoardProps) {
                 }
             }))
         }
-    }
- 
+    }  
+
     return (
         <div className="flex flex-col justify-center sm:flex-row bg-gray-5000">
             <div className="flex flex-col justify-center items-center bg-gray-900 p-4 rounded-xl">
                 {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">
-                    {row.map((_, cIdx) => <BoardCell key={`${cIdx}_${rIdx}`} onCellClick={handleCellClick(cIdx, rIdx)} cellValue={board[cIdx][rIdx] ?? " "} />)}
+                    {row.map((_, cIdx) => (
+                        <BoardCell key={`${cIdx}_${rIdx}`}
+                            onCellClick={handleCellClick(cIdx, rIdx)}
+                            cellValue={board[cIdx][rIdx] ?? " "}
+                            winHighlight={isHighlighted(rIdx, cIdx)} />
+                    ))}
+
                 </div>)}
             </div>
             <div className="p-6 w-96">
