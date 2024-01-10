@@ -16,7 +16,7 @@ function GameStatusComponent({ validation, players, currentPlayerId }: GameResul
             {status === GameValidationStatus.NONE && currentPlayer ? <div className="text-gray-300 text-lg">Your turn {currentPlayer?.name ?? ""}!</div> : null}
             {status === GameValidationStatus.TIE ? <div className="text-gray-300 text-lg">Wow! It's a tie!</div> : null}
             {status === GameValidationStatus.WIN && winnerId && winner ?
-                <div className="text-yellow-500 text-lg">
+                <div className="text-yellow-500 text-md">
                     Congratulations!<br />
                     Player {winner.name} won!
                 </div> : null

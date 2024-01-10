@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
+import FormTitle from '../ui/FormTitle';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -20,16 +23,14 @@ const Register = () => {
   };
 
   return (
-    <div className="w-full max-w-xs mt-6">
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-2xl font-semibold mb-6">Register</h2>
-        {error && <p>{error}</p>}
+    <div className="flex flex-col items-center p-12">
+      <form className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 flex flex-col">
+        <FormTitle>Register</FormTitle>
         <div className='mb-4'>
           <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="email">
             Email
           </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <Input
             type="email"
             id="email"
             placeholder="Enter your email"
@@ -41,8 +42,7 @@ const Register = () => {
           <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="name">
             Your name
           </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <Input
             type="text"
             id="name"
             placeholder="Enter your name"
@@ -54,8 +54,7 @@ const Register = () => {
           <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="password">
             Password
           </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <Input
             type="password"
             id="password"
             placeholder="Enter your password"
@@ -63,11 +62,7 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={handleRegister}
-        >
-          Register
-        </button>
+        <Button onClick={handleRegister}>Register</Button>
       </form>
     </div>
   );
