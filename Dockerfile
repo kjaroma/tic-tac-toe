@@ -8,6 +8,7 @@ COPY ./client/package.json .
 COPY ./client/package-lock.json .
 COPY ./client/tsconfig.json .
 COPY ./client/tailwind.config.js .
+COPY ./client/.env .
 
 RUN npm ci
 
@@ -20,9 +21,9 @@ RUN npm run build --production
 FROM node:20-alpine as apibuilder
 WORKDIR /app
 
-COPY ./server/package.json .
-COPY ./server/package-lock.json .
+COPY ./server/package*.json .
 COPY ./server/tsconfig.json .
+COPY ./server/prisma ./prisma
 
 RUN npm ci
 

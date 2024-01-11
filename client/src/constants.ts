@@ -1,6 +1,6 @@
 export const URLS = {
-  login: 'http://localhost:8080/api/users/login',
-  register: 'http://localhost:8080/api/users/register',
-  createGame: 'http://localhost:8080/api/games/create',
-  joinGame:  'ws://localhost:8080/api/games/'
+  login: `${process.env.REACT_APP_API_URL}/api/users/login`,
+  register: `${process.env.REACT_APP_API_URL}/api/users/register`,
+  createGame: `${process.env.REACT_APP_API_URL}/api/games/create`,
+  joinGame: `${process.env.REACT_APP_WS_URL}/api/games/`
 } as const

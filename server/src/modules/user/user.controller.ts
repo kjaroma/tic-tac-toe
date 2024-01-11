@@ -17,6 +17,7 @@ export async function createUser(
     path: '/',
     httpOnly: true,
     secure: true,
+    sameSite: true,
   });
   reply.status(HttpStatus.CREATED).send(payload);
 }
