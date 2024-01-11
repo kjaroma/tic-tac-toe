@@ -1,5 +1,5 @@
 {
-  "name": "fastify-playground",
+  "name": "tic-tac-toe-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

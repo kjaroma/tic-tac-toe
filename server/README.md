@@ -1,14 +1,52 @@
 # Task: Developing a Tic-Tac-Toe Web App
 
-## Missing parts:
-- Use Zod schema for configuration validation,
-- Improve Websocket client verification using callback,
-- Better game handling,
-- Validate user inputs on auth endpoints,
-- Use Redis to store game partials
-- Make game generic on game create
-- Implement web application
+## Running project
+### Requirements
+- docker
 
+### Running production
+- Project setup is fully automated, to test application we need to run:
+```sh
+docker compose up
+```
+### Running development
+Install modules in `client` and `server` directories.
+#### Set up database
+In the main project folder run:
+```sh
+docker compose up
+```
+When database is created we need to run migrations against it
+From a `server` folder run:
+```sh
+npm run db:migrate
+```
+#### Running client
+From the `client` directory run:
+```sh
+npm start
+```
+Client application will be available on `localhost:3000`
+
+#### Running server
+From `server` directory run:
+```sh
+npm run dev
+```
+Server will be available on `localhost:8000`
+
+## TODOs:
+- Handle different board sizes,
+- Better client and server error handling,
+- Rmove clients from game on disconnect,
+- Remove game from game controller when no players connected (memory footprint, leaks)
+- Use single WebSocket for handling connections (without gameId path param),
+- Move common game code to shared namespace,
+- Client performance, not slow - but also not optimized,
+- Add more integration and E2E tests,
+- Display matches history,
+- Use Zod schema for configuration validation,
+- Validate user inputs on auth endpoints,
 
 ## Description:
 

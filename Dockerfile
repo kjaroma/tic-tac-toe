@@ -27,6 +27,7 @@ COPY ./server/tsconfig.json .
 RUN npm ci
 
 COPY ./server .
+RUN ls -al .
 
 # format lint and test 
 FROM apibuilder as quality
