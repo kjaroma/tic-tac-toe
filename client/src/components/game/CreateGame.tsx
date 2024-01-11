@@ -36,7 +36,7 @@ function CreateGame({ onGameCreate }: CreateGameProps) {
         <label className='block text-gray-700 font-bold mb-2' htmlFor="size">Board size: {boardSize}</label>
         <input className="mb-2" type="range" min={3} max={9} step={2} id="size" defaultValue={boardSize} onChange={onBoardSizeChange} />
       </div>
-      <Button onClick={handleGameCreate}>Crete New Game</Button>
+      <Button onClick={handleGameCreate}>Create New Game</Button>
     </div>
   )
 }

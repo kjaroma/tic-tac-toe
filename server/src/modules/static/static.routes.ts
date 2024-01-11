@@ -7,13 +7,13 @@ export async function staticRoutes(app: FastifyInstance) {
     root: path.join(process.cwd(), 'public'),
   });
   function handler(req: FastifyRequest, reply: FastifyReply) {
-    reply.sendFile('index.html')
+    reply.sendFile('index.html');
   }
-  ['/login', '/register', '/game', '/history'].forEach(url => {
+  ['/login', '/register', '/game', '/history'].forEach((url) => {
     app.route({
       method: ['GET'],
       url,
       handler,
-    })
-  })
+    });
+  });
 }
