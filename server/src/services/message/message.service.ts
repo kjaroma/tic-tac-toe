@@ -1,7 +1,6 @@
 import { IncomingMessage } from 'http';
 import { Server, WebSocket } from 'ws';
-import { GameMessageType } from '../../shared/types';
-import { GameState } from '../game/tttgame';
+import { GameMessageType, GameState } from '../../shared/types';
 import { IMessageService } from '../interfaces/IMessageService';
 
 // TODO Add interface and tests

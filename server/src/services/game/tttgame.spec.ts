@@ -13,30 +13,32 @@ describe('game', () => {
   describe('addPlayer', () => {
     const game = new TTTGame('id', 3);
     it('should add a host player to the game', () => {
-      game.addPlayer('player1');
+      game.addPlayer('player1', 'John');
       expect(game['players'].length).toBe(1);
       expect(game['players'][0].id).toBe('player1');
       expect(game['players'][0].type).toBe('host');
       expect(game['players'][0].symbol).toBe('x');
+      expect(game['players'][0].name).toBe('John');
     });
 
     it('should add a guest player to the game', () => {
-      game.addPlayer('player2');
+      game.addPlayer('player2', 'Mary');
       expect(game['players'].length).toBe(2);
       expect(game['players'][1].id).toBe('player2');
       expect(game['players'][1].type).toBe('guest');
       expect(game['players'][1].symbol).toBe('o');
+      expect(game['players'][1].name).toBe('Mary');
     });
 
     it('should throw adding more than 2 players to the game', () => {
-      expect(() => game.addPlayer('pl3')).toThrow();
+      expect(() => game.addPlayer('pl3', 'Tom')).toThrow();
     });
   });
 
   describe('boardMoves', () => {
     const game = new TTTGame('id', 3);
-    game.addPlayer('pl1');
-    game.addPlayer('pl2');
+    game.addPlayer('pl1', 'John');
+    game.addPlayer('pl2', 'Mary');
     it('should register moves properly on a board', () => {
       game.makeMove(0, 0, 'pl1');
       game.makeMove(2, 2, 'pl2');
@@ -73,8 +75,8 @@ describe('game', () => {
         [null, 'o', 'x'],
       ],
       players: [
-        { type: 'host', id: 'pl1', symbol: 'x' },
-        { type: 'guest', id: 'pl2', symbol: 'o' },
+        { type: 'host', id: 'pl1', symbol: 'x', name: 'John' },
+        { type: 'guest', id: 'pl2', symbol: 'o', name: 'Mary' },
       ],
       currentPlayerId: 'pl2',
       validation: { status: GameValidationStatus.NONE, result: [] },
@@ -110,8 +112,8 @@ describe('game', () => {
         [null, 'o', 'x'],
       ],
       players: [
-        { type: 'host', id: 'pl1', symbol: 'x' },
-        { type: 'guest', id: 'pl2', symbol: 'o' },
+        { type: 'host', id: 'pl1', symbol: 'x', name: 'John' },
+        { type: 'guest', id: 'pl2', symbol: 'o', name: 'Mary' },
       ],
       currentPlayerId: 'pl1',
       validation: {
@@ -159,8 +161,8 @@ describe('game', () => {
     };
 
     const game = new TTTGame('id', 3);
-    game.addPlayer('pl1');
-    game.addPlayer('pl2');
+    game.addPlayer('pl1', 'John');
+    game.addPlayer('pl2', 'Mary');
     game.makeMove(0, 0, 'pl1');
     game.makeMove(2, 1, 'pl2');
     let state = game.makeMove(2, 2, 'pl1');

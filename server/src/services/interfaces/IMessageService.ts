@@ -1,4 +1,4 @@
-import { GameState } from '../game/tttgame';
+import { GameState } from '../../shared/types';
 
 export interface IMessageService {
   getInfoMessage: (message: string) => string;
