@@ -24,9 +24,13 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   const { gameId } = req.params as { gameId: string };
 
   const game = await gameService.findGameById(gameId);
-  // TODO check if game was not completed before
   if (!game) {
-    throw new Error('Game not found');
+    messageService.emitErrorMessage(`GAME_NOT_FOUND|Game ${gameId} not found!`)
+    throw new GameError('Game not found', gameId);
+  }
+  if(game && game.state === GameStatus.FINISHED) {
+    messageService.emitErrorMessage(`GAME_FINISHED|Game ${gameId} already finished!`)
+    throw new GameError('Game not found', gameId);
   }
 
   if (server.clients.size > 2) {
@@ -38,8 +42,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
 
   gameService.createGameBoard(3, gameId);
   const state = gameService.addGamePlayer(gameId, playerId, name ?? '-');
-  if (state && server.clients.size === 2) {
-    // TODO Sometimes player misses state update
+  if (state) {
     messageService.emitStateMessage(state);
   }
 
@@ -49,7 +52,10 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   }
 
   connection.socket.on('close', () => {
-    // TODO remove player from game.
+    // Last client is disconnecting
+    if(server.clients.size===1) {
+      // TODO Delete game by id
+    }
   });
 
   connection.socket.on('message', (rawMessage) => {
