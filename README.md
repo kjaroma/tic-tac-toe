@@ -14,7 +14,7 @@ Install modules in `client` and `server` directories.
 #### Set up database
 In the main project folder run:
 ```sh
-docker compose up
+docker compose up postgres
 ```
 When database is created we need to run migrations against it
 From a `server` folder run:
@@ -34,6 +34,20 @@ From `server` directory run:
 npm run dev
 ```
 Server will be available on `localhost:8000`
+
+## Screenshots
+### Desktop
+![Registration](./screenshots/screen-register.png "Registration")
+![Game start](./screenshots/screen-play.png "Game Start")
+![Gameplay](./screenshots/screen-gameplay1.png "Gameplay")
+![Gameplay](./screenshots/screen-gameplay2.png "Gameplay")
+![Gameplay](./screenshots/screen-gameplay3.png "Gameplay")
+### Mobile
+![Registration](./screenshots/mobile-register.png "Registration")
+![Game start](./screenshots/mobile-play.png "Game Start")
+![Gameplay](./screenshots/mobile-gameplay1.png "Gameplay")
+![Gameplay](./screenshots/mobile-gameplay2.png "Gameplay")
+
 
 ## TODOs:
 - Handle different board sizes,
