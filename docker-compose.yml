@@ -1,5 +1,17 @@
 version: "3.8"
 services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: fastify
+    ports:
+      - 8080:8000
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - app
   postgres:
     image: postgres:16-alpine
     container_name: postgres
@@ -9,7 +21,7 @@ services:
     networks:
       - app
     env_file:
-      - ./postgres.env
+      - ./server/postgres.env
 
 networks:
   app:

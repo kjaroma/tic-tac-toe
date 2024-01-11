@@ -56,5 +56,5 @@ export const init = async (
 
 export const run = (fastify: FastifyInstance) => {
   const port = process.env.PORT ?? 8000;
-  return fastify.listen({ port: +port });
+  return fastify.listen({ port: +port, host: '0.0.0.0' });
 };
