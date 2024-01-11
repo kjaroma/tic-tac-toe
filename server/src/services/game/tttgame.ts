@@ -102,8 +102,15 @@ export class TTTGame implements IGame {
   }
 
   public addPlayer(id: string, name: string): GameState | undefined {
-    if (this.players.length >= 2) {
+    const player = this.players.find(pl => pl.id === id)
+    if (this.players.length >= 2 && !player) {
       throw new GameError('Too many players', this.gameId);
+    }
+    if (player && this.players.length < 2) {
+      return {
+        ...this.getGameState(),
+        validation: { status: GameValidationStatus.NONE, result: [] }
+      }
     }
     if (this.players.length === 0) {
       this.players.push({
