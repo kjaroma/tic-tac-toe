@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import FormTitle from '../ui/FormTitle';
+import FromError from '../ui/FormError';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,19 +13,22 @@ const Login = () => {
 
   const { onLogin } = useAuth();
 
-  const handleLogin = (e: React.MouseEvent) => {
+  const handleLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
-    onLogin(email, password)
-    if (email && password) {
-      setError('');
-    } else {
-      setError('Please enter both email and password');
+    const error = await onLogin(email, password)
+    if (error) {
+      setError(error);
     }
   };
 
+  useEffect(() => {
+    setError('')
+  }, [email, password])
+  const isDisabled = email.length === 0 || password.length === 0
+
   return (
     <div className="flex flex-col items-center justify-center p-12">
-      <form className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 flex flex-col">
+      <form className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 flex flex-col w-80">
         <FormTitle>Login</FormTitle>
         <div className='mb-4'>
           <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="email">
@@ -38,7 +42,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div className='mb-6'>
+        <div>
           <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="password">
             Password
           </label>
@@ -50,7 +54,8 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <Button onClick={handleLogin}>Login</Button>
+        <FromError message={error} />
+        <Button onClick={handleLogin} disabled={isDisabled}>Login</Button>
         <div>
           <span className='text-sm block pt-4'>
             Do not have account yet?

@@ -11,8 +11,8 @@ export type UserAuthData = {
 
 export type AuthContextType = {
     userAuthData: UserAuthData, 
-    onLogin: (email: string, password: string) => void,
-    onRegister: (email: string, name:string, password: string) => void,
+    onLogin: (email: string, password: string) => Promise<string|undefined>,
+    onRegister: (email: string, name:string, password: string) => Promise<string|undefined>,
     onLogout: () => void
 }
 
@@ -24,7 +24,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const location = useLocation();
     const [_, setCookie] = useCookies(['access_token'])
 
-    const makeAuthRequest = async (email: string, password: string, url: string, name?: string) => {
+    const makeAuthRequest = async (email: string, password: string, url: string, name?: string): Promise<string|undefined> => {
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -33,10 +33,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
                 },
                 body: JSON.stringify({ email, name, password }),
             })
-            if (!response.ok) {
-                throw new Error('Invalid credentials');
-            }
             const data = await response.json();
+            if (!response.ok) {
+                return  data.message
+            }
             setUserAuthData(data)
             setCookie('access_token', data.accessToken)
             const origin = location.state?.from?.pathname || '/game';
