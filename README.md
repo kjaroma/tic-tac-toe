@@ -43,10 +43,7 @@ Server will be available on `localhost:8000`
 ![Gameplay](./screenshots/screen-gameplay2.png "Gameplay")
 ![Gameplay](./screenshots/screen-gameplay3.png "Gameplay")
 ### Mobile
-![Registration](./screenshots/mobile-register.png "Registration")
-![Game start](./screenshots/mobile-play.png "Game Start")
-![Gameplay](./screenshots/mobile-gameplay1.png "Gameplay")
-![Gameplay](./screenshots/mobile-gameplay2.png "Gameplay")
+![Mobile](./screenshots/mobile.png "Mobile")
 
 
 ## TODOs:
