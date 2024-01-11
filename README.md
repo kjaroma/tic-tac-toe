@@ -5,7 +5,10 @@
 - docker
 
 ### Running production
-- Project setup is fully automated, to test application we need to run:
+Before running set up `API_URL` and `WS_URL` in `client/.env` file.
+Uncomment mount volumes in `docker-compose.yml` for database data persistance.
+
+Project setup is fully automated, to test application we need to run:
 ```sh
 docker compose up
 ```
@@ -26,7 +29,8 @@ From the `client` directory run:
 ```sh
 npm start
 ```
-Client application will be available on `localhost:3000`
+Set up local client port in `.env` file.
+Client application will be available on `localhost:<PORT>`
 
 #### Running server
 From `server` directory run:
