@@ -10,7 +10,7 @@ const Game = () => {
   return (
     <div className="flex flex-col items-center p-12">
       {gameId
-        ? <TicTacToeBoard gameId={gameId} />
+        ? <TicTacToeBoard gameId={gameId} onGameCreate={onGameCreate} />
         : <GameStarter onGameCreate={onGameCreate} onGameJoin={onGameCreate} /> 
       }
     </div>

@@ -17,6 +17,7 @@ export enum GameMessageType {
   MOVE = 'move',
   INFO = 'info',
   STATE_UPDATE = 'state_update',
+  GAME_INVITATION = 'game_invitation',
   FINISH = 'finish',
   ERROR = 'error',
 }

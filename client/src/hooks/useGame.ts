@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Board, GameState, GameValidationStatus } from "../shared/types";
 import { generate2DArray, linearTo2dIndex } from "../shared/array";
 
-const useGameInitialState: GameState = {
+const initialGameState: GameState = {
         board: generate2DArray(3, " ") as Board,
         history: [],
         players: [],
@@ -13,9 +13,9 @@ const useGameInitialState: GameState = {
         }
 }
 
-function useGame() {
+function useGame(gameId: string) {
 
-    const [gameState, setGameState] = useState<GameState>(useGameInitialState)
+    const [gameState, setGameState] = useState<GameState>(initialGameState)
 
     const {currentPlayerId, board, history, validation, players} = gameState
 
@@ -28,6 +28,10 @@ function useGame() {
         }
         return false
     }
+
+    useEffect(() => {
+        setGameState(initialGameState)
+    }, [gameId])
 
     return ({
         setGameState,

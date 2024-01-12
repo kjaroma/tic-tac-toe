@@ -1,0 +1,1 @@
+export type OnSuccessData<T> = (data: T) => void
