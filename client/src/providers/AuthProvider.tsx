@@ -2,6 +2,7 @@ import { PropsWithChildren, createContext, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { URLS } from "../constants";
 import { useCookies } from "react-cookie";
+import axios, { AxiosError } from "axios";
 
 export type UserAuthData = {
     accessToken: string | null,
@@ -10,9 +11,9 @@ export type UserAuthData = {
 }
 
 export type AuthContextType = {
-    userAuthData: UserAuthData, 
-    onLogin: (email: string, password: string) => Promise<string|undefined>,
-    onRegister: (email: string, name:string, password: string) => Promise<string|undefined>,
+    userAuthData: UserAuthData,
+    onLogin: (email: string, password: string) => Promise<string | undefined>,
+    onRegister: (email: string, name: string, password: string) => Promise<string | undefined>,
     onLogout: () => void
 }
 
@@ -24,31 +25,21 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const location = useLocation();
     const [_, setCookie] = useCookies(['access_token'])
 
-    const makeAuthRequest = async (email: string, password: string, url: string, name?: string): Promise<string|undefined> => {
+    const makeAuthRequest = async (email: string, password: string, url: string, name?: string): Promise<string | undefined> => {
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, name, password }),
-            })
-            const data = await response.json();
-            if (!response.ok) {
-                return  data.message
-            }
-            setUserAuthData(data)
-            setCookie('access_token', data.accessToken)
+            const response = await axios.post<UserAuthData>(url, { email, password, name })
+            setUserAuthData(response.data)
+            setCookie('access_token', response.data.accessToken)
             const origin = location.state?.from?.pathname || '/game';
             navigate(origin);
         } catch (e) {
-            console.error((e as any).message)
+            return (e as AxiosError<{ message: string }>)?.response?.data?.message ?? 'Login failed'
         }
     }
 
     const handleLogin = async (email: string, password: string) => makeAuthRequest(email, password, URLS.login)
 
-    const handleRegister = async (email: string, name:string, password: string) => makeAuthRequest(email, password, URLS.register, name)
+    const handleRegister = async (email: string, name: string, password: string) => makeAuthRequest(email, password, URLS.register, name)
 
 
     const handleLogout = () => {
