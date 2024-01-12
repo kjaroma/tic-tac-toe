@@ -33,6 +33,7 @@ Set up local client port in `.env` file.
 Client application will be available on `localhost:<PORT>`
 
 #### Running server
+Change `DATABASE_URL` host to localhost in `.env` file.
 From `server` directory run:
 ```sh
 npm run dev
