@@ -14,6 +14,9 @@ export enum GameStatus {
 }
 
 export enum GameMessageType {
+  CREATE = 'create',
+  JOIN = 'join',
+  LEAVE = 'leave',
   MOVE = 'move',
   INFO = 'info',
   STATE_UPDATE = 'state_update',

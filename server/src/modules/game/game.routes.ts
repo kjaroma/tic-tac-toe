@@ -1,6 +1,6 @@
 import fastifyWebsocket from '@fastify/websocket';
 import { FastifyInstance } from 'fastify';
-import { createGame, playGame } from './game.controller';
+import { createGame, gameLobby, playGame } from './game.controller';
 import { $ref } from '../../bootstrap/schemas/schemas.handler';
 
 export async function gameRoutes(app: FastifyInstance) {
@@ -11,6 +11,14 @@ export async function gameRoutes(app: FastifyInstance) {
       // verifyClient option
     },
   });
+
+  app.get(
+    '/lobby',
+    {
+      websocket: true,
+    },
+    gameLobby,
+  );
 
   app.get(
     '/create',

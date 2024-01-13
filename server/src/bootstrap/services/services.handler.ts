@@ -6,6 +6,7 @@ import { UserService } from '../../services/user/user.service';
 import { FastifyInstance } from 'fastify';
 import GameService from '../../services/game/game.service';
 import { GameRepository } from '../../repositories/GameRepository';
+import LobbyService from '../../services/lobby/lobby.service';
 
 export function registerServices(app: FastifyInstance) {
   app.decorate('authenticate', authHandler);
@@ -20,4 +21,7 @@ export function registerServices(app: FastifyInstance) {
   const gameRepository = new GameRepository(prisma);
   const gameService = new GameService(gameRepository);
   app.decorate('gameService', gameService);
+
+  const lobbyService = new LobbyService(2);
+  app.decorate('lobbyService', lobbyService);
 }

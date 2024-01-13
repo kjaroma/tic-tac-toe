@@ -8,10 +8,65 @@ import {
 } from '../../shared/types';
 import { GameError } from '../../common/errors';
 import MessageService from '../../services/message/message.service';
+import { Record } from '@prisma/client/runtime/library';
+import { WSRoom } from '../../types';
 
 export async function createGame(req: FastifyRequest, reply: FastifyReply) {
   const { id } = await req.server.gameService.createGame();
   reply.status(HttpStatus.CREATED).send({ gameId: id });
+}
+
+export async function gameLobby(connection: SocketStream, req: FastifyRequest) {
+  const { lobbyService } = req.server;
+
+  const socket = Object.assign(connection.socket, { roomId: undefined })
+
+  const i = setInterval(() => {
+    socket.send(JSON.stringify(Object.keys(lobbyService.rooms)));
+  }, 15000);
+  socket.on('close', () => {
+    clearInterval(i);
+  });
+  socket.on('message', (raw) => {
+    const { log } = req;
+    let message: Record<string, unknown>;
+    try {
+      message = JSON.parse(raw.toString());
+    } catch (e) {
+      log.error(
+        'Failed to parse WS raw message' + JSON.stringify(raw.toString()),
+      );
+      return;
+    }
+    const { type, payload } = message;
+    switch (type as GameMessageType) {
+      case GameMessageType.CREATE:
+        lobbyService.createRoom(socket as unknown as WSRoom)
+        socket.send(
+          'room created' + JSON.stringify(Object.keys(lobbyService.rooms)),
+        );
+        break;
+      case GameMessageType.JOIN:
+        // eslint-disable-next-line no-case-declarations
+        const { roomId } = payload as any;
+        lobbyService.joinRoom(roomId, socket as unknown as WSRoom)
+        break;
+      case GameMessageType.LEAVE:
+        lobbyService.leaveRoom(socket as unknown as WSRoom)
+        break;
+      case GameMessageType.INFO:
+        {
+          const sockets = lobbyService.getRoomSockets(lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom))
+          for (const socket of sockets) {
+            socket.send("Room message")
+          }
+        }
+        break;
+      default:
+        log.warn(`Type: message type ${message.type} unknown`);
+        break;
+    }
+  });
 }
 
 export async function playGame(connection: SocketStream, req: FastifyRequest) {
@@ -25,11 +80,13 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
 
   const game = await gameService.findGameById(gameId);
   if (!game) {
-    messageService.emitErrorMessage(`GAME_NOT_FOUND|Game ${gameId} not found!`)
+    messageService.emitErrorMessage(`GAME_NOT_FOUND|Game ${gameId} not found!`);
     throw new GameError('Game not found', gameId);
   }
-  if(game && game.state === GameStatus.FINISHED) {
-    messageService.emitErrorMessage(`GAME_FINISHED|Game ${gameId} already finished!`)
+  if (game && game.state === GameStatus.FINISHED) {
+    messageService.emitErrorMessage(
+      `GAME_FINISHED|Game ${gameId} already finished!`,
+    );
     throw new GameError('Game not found', gameId);
   }
 
@@ -53,7 +110,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
 
   connection.socket.on('close', () => {
     // Last client is disconnecting
-    if(server.clients.size===1) {
+    if (server.clients.size === 1) {
       // TODO Delete game by id
     }
   });
