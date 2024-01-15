@@ -14,15 +14,23 @@ export enum GameStatus {
 }
 
 export enum GameMessageType {
-  CREATE = 'create',
-  JOIN = 'join',
+  // Server messages
+  ROOM_CREATED = 'room_created',
+  ROOM_JOINED = 'room_joined',
+  ROOM_LEFT = 'room_left',
+  LOBBY_UPDATE = 'lobby_update',
+
+  //
+  CREATE_ROOM = 'create_room',
+  ERROR = 'error',
+  FINISH = 'finish',
+  GAME_INVITATION = 'game_invitation',
+  INFO = 'info',
+  JOIN_ROOM = 'join_room',
   LEAVE = 'leave',
   MOVE = 'move',
-  INFO = 'info',
+  MAKE_MOVE  = 'make_move',
   STATE_UPDATE = 'state_update',
-  GAME_INVITATION = 'game_invitation',
-  FINISH = 'finish',
-  ERROR = 'error',
 }
 
 export enum GameValidationStatus {

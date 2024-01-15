@@ -19,7 +19,11 @@ function App() {
         <Navigation />
         <Routes>
           <Route element={<Layout />}>
-            <Route index element={<Game />} />
+            <Route index element={
+              <ProtectedRoute>
+                <Game />
+              </ProtectedRoute>
+            } />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="game" element={

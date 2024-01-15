@@ -8,8 +8,8 @@ import {
 } from '../../shared/types';
 import { GameError } from '../../common/errors';
 import MessageService from '../../services/message/message.service';
-import { Record } from '@prisma/client/runtime/library';
 import { WSRoom } from '../../types';
+import { GameMessage } from '../../shared/messages';
 
 export async function createGame(req: FastifyRequest, reply: FastifyReply) {
   const { id } = await req.server.gameService.createGame();
@@ -17,19 +17,31 @@ export async function createGame(req: FastifyRequest, reply: FastifyReply) {
 }
 
 export async function gameLobby(connection: SocketStream, req: FastifyRequest) {
-  const { lobbyService } = req.server;
+  const { token } = req.query as { token: string };
+  const { authService, gameService, lobbyService } = req.server;
 
-  const socket = Object.assign(connection.socket, { roomId: undefined })
+  const { sub: playerId, name } = authService.decodeAuthToken(token);
 
-  const i = setInterval(() => {
-    socket.send(JSON.stringify(Object.keys(lobbyService.rooms)));
-  }, 15000);
-  socket.on('close', () => {
-    clearInterval(i);
-  });
+  const socket = Object.assign(connection.socket, { roomId: undefined });
+  socket.send(
+    JSON.stringify({
+      type: GameMessageType.LOBBY_UPDATE,
+      payload: { rooms: lobbyService.getLobbyInfo() },
+    }),
+  );
+
+  const lobbyUpdateInterval = setInterval(() => {
+    socket.send(
+      JSON.stringify({
+        type: GameMessageType.LOBBY_UPDATE,
+        payload: { rooms: lobbyService.getLobbyInfo() },
+      }),
+    );
+  }, 5000);
+
   socket.on('message', (raw) => {
     const { log } = req;
-    let message: Record<string, unknown>;
+    let message: GameMessage;
     try {
       message = JSON.parse(raw.toString());
     } catch (e) {
@@ -39,33 +51,143 @@ export async function gameLobby(connection: SocketStream, req: FastifyRequest) {
       return;
     }
     const { type, payload } = message;
+    req.server.log.info(type, payload)
+
     switch (type as GameMessageType) {
-      case GameMessageType.CREATE:
-        lobbyService.createRoom(socket as unknown as WSRoom)
+
+      case GameMessageType.CREATE_ROOM:
+        // eslint-disable-next-line no-case-declarations
+        const roomId = lobbyService.createRoom(socket as unknown as WSRoom);
+        gameService.createGameBoard(3, roomId)
+        gameService.addGamePlayer(roomId, playerId, name ?? "-")
         socket.send(
-          'room created' + JSON.stringify(Object.keys(lobbyService.rooms)),
+          JSON.stringify({
+            type: GameMessageType.ROOM_CREATED,
+            payload: { roomId },
+          }),
         );
         break;
-      case GameMessageType.JOIN:
+
+      case GameMessageType.JOIN_ROOM: {
         // eslint-disable-next-line no-case-declarations
-        const { roomId } = payload as any;
-        lobbyService.joinRoom(roomId, socket as unknown as WSRoom)
+        const roomId = lobbyService.joinRoom(payload.roomId, socket as unknown as WSRoom);
+        if (roomId) {
+          socket.send(
+            JSON.stringify({
+              type: GameMessageType.ROOM_JOINED,
+              payload: { roomId },
+            }),
+          );
+          const gameState = gameService.addGamePlayer(roomId, playerId, name ?? "-")
+          if (gameState) {
+            const sockets = lobbyService.getRoomSockets(
+              lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom),
+            );
+            for (const socket of sockets) {
+              socket.send(JSON.stringify(
+                {
+                  type: GameMessageType.STATE_UPDATE,
+                  payload: { gameState }
+                }
+              ));
+            }
+          }
+        }
+      }
         break;
-      case GameMessageType.LEAVE:
-        lobbyService.leaveRoom(socket as unknown as WSRoom)
+
+      case GameMessageType.LEAVE: {
+        const roomId = lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom)
+        const isClosed = lobbyService.leaveRoom(socket as unknown as WSRoom);
+        if (isClosed) {
+          // TODO clean up game
+          req.server.log.info(`Game ${roomId} should be closed`)
+        }
+      }
         break;
+
+      case GameMessageType.MAKE_MOVE: {
+        const roomId = lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { col, row } = payload as any // TODO proper type
+        let gameState;
+        try {
+          gameState = gameService.setBoardMove(
+            roomId,
+            col,
+            row,
+            playerId,
+          );
+          const { validation, board, history, players } = gameState;
+          if (
+            validation.status === GameValidationStatus.TIE ||
+            validation.status === GameValidationStatus.WIN
+          ) {
+            gameService.saveNewGame(roomId, {
+              state: GameStatus.FINISHED,
+              // TODO Handle tie
+              // TODO Refactor this
+              hostId: players.find((pl) => pl.type === 'host')?.id ?? null,
+              guestId: players.find((pl) => pl.type === 'guest')?.id ?? null,
+              winnerId: validation.winnerId,
+              gameData: { board, history },
+            });
+          }
+        } catch (e) {
+          if (e instanceof GameError) {
+            if (e.message === 'It is not your turn now') {
+              const sockets = lobbyService.getRoomSockets(
+                lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom),
+              );
+              for (const socket of sockets) {
+                socket.send(JSON.stringify(
+                  {
+                    type: GameMessageType.STATE_UPDATE,
+                    payload: { gameState }
+                  }
+                ));
+              }
+            } else {
+              throw e;
+            }
+          }
+        }
+        if (gameState) {
+          const sockets = lobbyService.getRoomSockets(
+            lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom),
+          );
+          for (const socket of sockets) {
+            socket.send(JSON.stringify(
+              {
+                type: GameMessageType.STATE_UPDATE,
+                payload: { gameState }
+              }
+            ));
+          }
+        }
+      }
+        break;
+
       case GameMessageType.INFO:
         {
-          const sockets = lobbyService.getRoomSockets(lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom))
+          const sockets = lobbyService.getRoomSockets(
+            lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom),
+          );
           for (const socket of sockets) {
-            socket.send("Room message")
+            socket.send('Room message');
           }
         }
         break;
+
       default:
-        log.warn(`Type: message type ${message.type} unknown`);
+        req.server.log.warn(`Type: message type ${message.type} unknown`);
         break;
     }
+  });
+
+  socket.on('close', () => {
+    clearInterval(lobbyUpdateInterval);
+    lobbyService.leaveRoom(socket as unknown as WSRoom)
   });
 }
 

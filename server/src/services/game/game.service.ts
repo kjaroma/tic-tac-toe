@@ -78,6 +78,26 @@ class GameService implements IGameService {
     }
   }
 
+  public async saveNewGame(id: string, data: Partial<Game>) {
+    const { winnerId, hostId, guestId, gameData } = data;
+    try {
+      return await this.gameRepository.create( {
+        state: GameStatus.FINISHED,
+        hostId,
+        guestId,
+        winnerId,
+        gameData,
+        boardSize: 3,
+      } as Game);
+    } catch (e) {
+      console.log(e)
+      throw new ApiError(
+        ErrorMessages.Game.UpdateFailed,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   public async saveGame(id: string, data: Partial<Game>) {
     const { winnerId, hostId, guestId, gameData } = data;
     try {
@@ -89,12 +109,15 @@ class GameService implements IGameService {
         gameData,
       } as Game);
     } catch (e) {
+      console.log(e)
       throw new ApiError(
         ErrorMessages.Game.UpdateFailed,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
+
+
   public async createGameBoard(
     boardSize: number,
     gameId: string,

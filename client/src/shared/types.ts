@@ -1,3 +1,5 @@
+import { Room } from "../components/lobby/LobbyTable";
+
 // Shared types used both on server and client
 export type BoardValue = BoardSymbol | null;
 export type Board = (BoardValue | null)[][];
@@ -14,11 +16,54 @@ export enum GameStatus {
 }
 
 export enum GameMessageType {
-  MOVE = 'move',
-  INFO = 'info',
+  ROOM_CREATED = 'room_created',
+  ROOM_JOINED = 'room_joined',
+  ROOM_LEFT = 'room_left',
+  LOBBY_UPDATE = 'lobby_update',
   STATE_UPDATE = 'state_update',
-  FINISH = 'finish',
+
+  // Common messages
+  INFO = 'info',
   ERROR = 'error',
+
+  // Client messages
+  CREATE_ROOM = 'create_room',
+  JOIN_ROOM = 'join_room',
+  LEAVE_ROOM = 'leave_room',
+  GAME_START = 'game_start',
+  MAKE_MOVE = 'make_move',
+  FINISH = 'finish',
+}
+
+export type GameMessageRoomCreatedPayload = {
+    roomId: string
+}
+
+export type GameMessageRoomJoinedPayload = {
+    roomId: string
+}
+
+export type GameMessageStateUpdatePayload = {
+    gameState: GameState
+}
+
+export type GameMessageErrorPayload = {
+    message: string
+}
+
+export type GameMessageInfoPayload = {
+    message: string
+}
+
+export type GameMessageLobbyUpdate = {
+    rooms: Room[]
+}
+
+export type GameMessagePayload = Record<string, unknown>
+
+export type GameMessage = {
+    type: keyof typeof GameMessageType,
+    payload: GameMessagePayload
 }
 
 export enum GameValidationStatus {

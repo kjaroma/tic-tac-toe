@@ -34,5 +34,5 @@ declare module '@fastify/jwt' {
 }
 
 export interface WSRoom extends WebSocket {
-  roomId: string
+  roomId: string;
 }

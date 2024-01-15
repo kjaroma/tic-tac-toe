@@ -1,20 +1,29 @@
-import { useCallback, useState } from "react";
-import GameStarter from "../game/GameStarter";
 import TicTacToeBoard from "../game/TicTacToeBoard";
+import Lobby from "./Lobby";
+import useGame from "../../hooks/useGame";
+import GameProvider from "../../providers/GameProvider";
 
-const Game = () => {
-  const [gameId, setGameId] = useState("")
-
-  const onGameCreate = useCallback((gameId: string) => setGameId(gameId), [])
-
+function Game() {
   return (
     <div className="flex flex-col items-center p-12">
-      {gameId
-        ? <TicTacToeBoard gameId={gameId} onGameCreate={onGameCreate} />
-        : <GameStarter onGameCreate={onGameCreate} onGameJoin={onGameCreate} /> 
-      }
+      <GameProvider>
+        <GamePanel />
+      </GameProvider>
     </div>
   );
 };
 
 export default Game
+
+function GamePanel() {
+  const {roomId} = useGame()
+  return (
+    <>
+      {
+        roomId
+          ? <TicTacToeBoard />
+          : <Lobby />
+      }
+    </>
+  )
+}
