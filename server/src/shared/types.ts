@@ -29,7 +29,7 @@ export enum GameMessageType {
   JOIN_ROOM = 'join_room',
   LEAVE = 'leave',
   MOVE = 'move',
-  MAKE_MOVE  = 'make_move',
+  MAKE_MOVE = 'make_move',
   STATE_UPDATE = 'state_update',
 }
 

@@ -4,40 +4,17 @@ import { ApiError } from '../../common/errors';
 import { ErrorMessages, HttpStatus } from '../../common/constants';
 import { GameState, GameStatus } from '../../shared/types';
 import { IGameService } from '../interfaces/IGameService';
-import { TTTGame } from './tttgame';
+import { TTTGame } from './game';
 
 class GameService implements IGameService {
   private games: Record<string, TTTGame> = {};
 
   constructor(private readonly gameRepository: GameRepository) {}
 
-  public async createGame(): Promise<Game | never> {
+  public async saveGame(data: Omit<Game, 'id'>) {
     try {
       return await this.gameRepository.create({
-        state: GameStatus.CREATED,
-        boardSize: 3,
-      } as Game);
-    } catch (e) {
-      throw new ApiError(
-        ErrorMessages.Game.CreationFailed,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  public async findGameById(id: string): Promise<Game | null> {
-    const game = await this.gameRepository.findUnique({ id });
-    return game;
-  }
-
-  public async setGameHost(id: string, hostId: string): Promise<Game | never> {
-    try {
-      return await this.gameRepository.update(
-        { id },
-        {
-          hostId,
-        },
-      );
+        ...data, state: GameStatus.FINISHED} as Game);
     } catch (e) {
       throw new ApiError(
         ErrorMessages.Game.UpdateFailed,
@@ -45,78 +22,6 @@ class GameService implements IGameService {
       );
     }
   }
-
-  public async setGameGuest(
-    id: string,
-    guestId: string,
-  ): Promise<Game | never> {
-    try {
-      return await this.gameRepository.update({ id }, {
-        guestId,
-      } as Game);
-    } catch (e) {
-      throw new ApiError(
-        ErrorMessages.Game.UpdateFailed,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  public async setGameState(
-    id: string,
-    state: GameStatus,
-  ): Promise<Game | never> {
-    try {
-      return await this.gameRepository.update({ id }, {
-        state,
-      } as Game);
-    } catch (e) {
-      throw new ApiError(
-        ErrorMessages.Game.UpdateFailed,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  public async saveNewGame(id: string, data: Partial<Game>) {
-    const { winnerId, hostId, guestId, gameData } = data;
-    try {
-      return await this.gameRepository.create( {
-        state: GameStatus.FINISHED,
-        hostId,
-        guestId,
-        winnerId,
-        gameData,
-        boardSize: 3,
-      } as Game);
-    } catch (e) {
-      console.log(e)
-      throw new ApiError(
-        ErrorMessages.Game.UpdateFailed,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  public async saveGame(id: string, data: Partial<Game>) {
-    const { winnerId, hostId, guestId, gameData } = data;
-    try {
-      return await this.gameRepository.update({ id }, {
-        state: GameStatus.FINISHED,
-        hostId,
-        guestId,
-        winnerId,
-        gameData,
-      } as Game);
-    } catch (e) {
-      console.log(e)
-      throw new ApiError(
-        ErrorMessages.Game.UpdateFailed,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
 
   public async createGameBoard(
     boardSize: number,
@@ -142,6 +47,10 @@ class GameService implements IGameService {
     playerId: string,
   ): GameState {
     return this.games[gameId].makeMove(col, row, playerId);
+  }
+
+  public deleteGame(gameId: string) {
+    delete this.games[gameId];
   }
 }
 

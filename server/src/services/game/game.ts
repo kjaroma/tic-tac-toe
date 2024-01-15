@@ -1,4 +1,4 @@
-import { PlayerType } from './../../shared/types';
+import { PlayerType } from '../../shared/types';
 import { GameError } from '../../common/errors';
 import {
   Board,

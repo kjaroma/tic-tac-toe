@@ -1,7 +1,7 @@
-import { PropsWithChildren, createContext, useCallback, useEffect, useState } from "react";
+import { PropsWithChildren, createContext, useEffect, useId, useState } from "react";
 import { Board, GameMessage, GameMessageErrorPayload, GameMessageInfoPayload, GameMessageLobbyUpdate, GameMessageRoomCreatedPayload, GameMessageStateUpdatePayload, GameMessageType, GameState, GameValidationStatus } from "../shared/types";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { URLS } from "../constants";
+import { Urls } from "../constants";
 import useLogger from "../hooks/useLogger";
 import { generate2DArray } from "../shared/array";
 import { useAuth } from "../hooks/useAuth";
@@ -34,13 +34,12 @@ export const GameContext = createContext<GameContextType>({} as GameContextType)
 const GameProvider = ({ children }: PropsWithChildren) => {
 
     const { error, warn } = useLogger()
-    const { accessToken } = useAuth().userAuthData ?? {} // Use token later
+    const { accessToken, userId } = useAuth().userAuthData ?? {} // Use token later
     const [gameState, setGameState] = useState<GameState>(initialGameState)
     const [roomId, setRoomId] = useState<string | undefined>()
     const [rooms, setRooms] = useState<Room[]>([])
 
-    const url = `${URLS.gameLobby}?token=${accessToken}`
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const url = `${Urls.PLAY_GAME}?token=${accessToken}`
     const { sendMessage, lastMessage, readyState } = useWebSocket(url, { share: false })
 
     // Incoming messages handler
@@ -53,7 +52,6 @@ const GameProvider = ({ children }: PropsWithChildren) => {
                 error(JSON.stringify(e))
             }
             const { type, payload } = message as GameMessage
-            console.log(type, payload)
             switch (type as GameMessageType) {
                 case GameMessageType.ROOM_CREATED:
                     setRoomId((payload as GameMessageRoomCreatedPayload).roomId)
@@ -87,7 +85,10 @@ const GameProvider = ({ children }: PropsWithChildren) => {
 
     const onMakeMove = (col: number, row: number) => (e: React.MouseEvent) => {
         e.preventDefault()
-        sendMessage(getMoveMessage(col, row))
+        // Keep the right turn
+        if(gameState.currentPlayerId === userId) {
+            sendMessage(getMoveMessage(col, row))
+        }
     }
 
     const onRoomJoin = (roomId: string) => (e: React.MouseEvent) => {
@@ -109,8 +110,6 @@ const GameProvider = ({ children }: PropsWithChildren) => {
         onRoomCreate,
         onRoomJoin,
     }
-
-    console.log(value)
 
     return (
         <GameContext.Provider value={value}>

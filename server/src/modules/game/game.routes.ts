@@ -1,6 +1,6 @@
 import fastifyWebsocket from '@fastify/websocket';
 import { FastifyInstance } from 'fastify';
-import { createGame, gameLobby, playGame } from './game.controller';
+import { playGame } from './game.controller';
 import { $ref } from '../../bootstrap/schemas/schemas.handler';
 
 export async function gameRoutes(app: FastifyInstance) {
@@ -13,31 +13,13 @@ export async function gameRoutes(app: FastifyInstance) {
   });
 
   app.get(
-    '/lobby',
+    '/play',
     {
       websocket: true,
-    },
-    gameLobby,
-  );
-
-  app.get(
-    '/create',
-    {
       schema: {
-        response: {
-          201: $ref('createGameResponseSchema'),
-        },
-      },
-      preHandler: [app.authenticate],
-    },
-    createGame,
-  );
-
-  app.get(
-    '/:gameId',
-    {
-      websocket: true,
+        querystring: $ref('gamePlayQuerySchema')
+      }
     },
     playGame,
-  );
+  )
 }

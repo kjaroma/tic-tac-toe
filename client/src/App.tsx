@@ -1,4 +1,3 @@
-import './App.css';
 import Game from './components/pages/Game';
 import History from './components/pages/History';
 import Navigation from './components/Navigation';
@@ -10,11 +9,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import './index.css'
 import Layout from './components/Layout';
 import Register from './components/pages/Register';
+import { AppRoutes } from './constants';
 
 
 function App() {
   return (
-    <div className="App">
       <AuthProvider>
         <Navigation />
         <Routes>
@@ -24,14 +23,14 @@ function App() {
                 <Game />
               </ProtectedRoute>
             } />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="game" element={
+            <Route path={AppRoutes.LOGIN} element={<Login />} />
+            <Route path={AppRoutes.REGISTER} element={<Register />} />
+            <Route path={AppRoutes.GAME} element={
               <ProtectedRoute>
                 <Game />
               </ProtectedRoute>
             } />
-            <Route path="history" element={
+            <Route path={AppRoutes.HISTORY} element={
               <ProtectedRoute>
                 <History />
               </ProtectedRoute>
@@ -40,7 +39,6 @@ function App() {
           </Route>
         </Routes>
       </AuthProvider>
-    </div>
   );
 }
 

@@ -1,3 +1,5 @@
+export const AUTH_COOKIE_NAME = 'access_token' as const
+
 export const HttpStatus = {
   OK: 200,
   CREATED: 201,

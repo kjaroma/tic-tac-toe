@@ -27,7 +27,7 @@ const Login = () => {
   const isDisabled = email.length === 0 || password.length === 0
 
   return (
-    <div className="flex flex-col items-center justify-center p-12">
+    <div className="flex flex-col items-center justify-center p-12 text-center">
       <form className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 flex flex-col w-80">
         <FormTitle>Login</FormTitle>
         <div className='mb-4'>

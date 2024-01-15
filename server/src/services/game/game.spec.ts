@@ -1,5 +1,5 @@
 import { BoardSymbol, GameValidationStatus } from '../../shared/types';
-import { TTTGame } from './tttgame';
+import { TTTGame } from './game';
 
 describe('game', () => {
   it('should create empty board', () => {

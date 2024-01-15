@@ -1,19 +1,11 @@
 import z from 'zod';
 
-const createGameResponseSchema = z.object({
-  gameId: z.string(),
+const gamePlayQuerySchema = z.object({
+  token: z.string(),
 });
 
-const joinGameSchema = z.object({
-  gameId: z.string({
-    required_error: 'Game ID is required',
-  }),
-});
-
-export type CreateGameResponse = z.infer<typeof createGameResponseSchema>;
-export type JoinGameUserInput = z.infer<typeof joinGameSchema>;
+export type GamePlayQueryType = z.infer<typeof gamePlayQuerySchema>;
 
 export const gameSchemas = {
-  createGameResponseSchema,
-  joinGameSchema,
+  gamePlayQuerySchema,
 };

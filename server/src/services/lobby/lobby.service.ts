@@ -27,17 +27,19 @@ class LobbyService {
     }
     socket.roomId = roomId;
     this.rooms[roomId].push(socket);
-    return roomId
+    return roomId;
   }
 
   public leaveRoom(socket: WSRoom): boolean {
     const { roomId } = socket;
-    this.rooms[roomId] = (this.rooms[roomId] ?? []).filter((so) => so !== socket);
+    this.rooms[roomId] = (this.rooms[roomId] ?? []).filter(
+      (so) => so !== socket,
+    );
     if (this.rooms[roomId].length === 0) {
       this.closeRoom(roomId);
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
   public getRoomSockets(roomId: string): WSRoom[] {

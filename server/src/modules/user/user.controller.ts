@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { CreateUserInput, LoginUserInput } from './user.schema';
-import { HttpStatus as HttpStatus } from '../../common/constants';
+import { AUTH_COOKIE_NAME, HttpStatus as HttpStatus } from '../../common/constants';
 
 export async function createUser(
   req: FastifyRequest<{
@@ -13,7 +13,7 @@ export async function createUser(
 
   const payload = await req.server.authService.register(email, password, name);
 
-  reply.setCookie('access_token', payload.accessToken, {
+  reply.setCookie(AUTH_COOKIE_NAME, payload.accessToken, {
     path: '/',
     httpOnly: true,
     secure: true,
@@ -33,10 +33,11 @@ export async function loginUser(
 
   const payload = await req.server.authService.login(email, password);
 
-  reply.setCookie('access_token', payload.accessToken, {
+  reply.setCookie(AUTH_COOKIE_NAME, payload.accessToken, {
     path: '/',
     httpOnly: true,
     secure: true,
+    sameSite: true,
   });
 
   return payload;

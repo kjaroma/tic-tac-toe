@@ -1,6 +1,6 @@
 import { PropsWithChildren, createContext, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { URLS } from "../constants";
+import { AUTH_COOKIE_NAME, Urls } from "../constants";
 import { useCookies } from "react-cookie";
 import axios, { AxiosError } from "axios";
 
@@ -23,7 +23,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const [userAuthData, setUserAuthData] = useState<UserAuthData>({} as UserAuthData);
     const navigate = useNavigate();
     const location = useLocation();
-    const [_, setCookie] = useCookies(['access_token'])
+    const [_, setCookie] = useCookies([AUTH_COOKIE_NAME])
 
     const makeAuthRequest = async (email: string, password: string, url: string, name?: string): Promise<string | undefined> => {
         try {
@@ -37,9 +37,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         }
     }
 
-    const handleLogin = async (email: string, password: string) => makeAuthRequest(email, password, URLS.login)
+    const handleLogin = async (email: string, password: string) => makeAuthRequest(email, password, Urls.LOGIN)
 
-    const handleRegister = async (email: string, name: string, password: string) => makeAuthRequest(email, password, URLS.register, name)
+    const handleRegister = async (email: string, name: string, password: string) => makeAuthRequest(email, password, Urls.REGISTER, name)
 
 
     const handleLogout = () => {

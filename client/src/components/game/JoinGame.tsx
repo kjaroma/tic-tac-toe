@@ -5,7 +5,7 @@ import Input from "../ui/Input";
 type GameJoinProps = {
     onGameJoin: (gameId: string) => void
 }
-
+// TODO Remove
 const GameJoin = ({ onGameJoin }: GameJoinProps) => {
 
     const [gameId, setGameId] = useState("")

@@ -25,8 +25,6 @@ function TicTacToeBoard() {
             return false
         }
 
-        console.log("board-render")
-
         return (
             <div className="flex flex-col justify-center sm:flex-row bg-gray-5000 relative">
                 {/* <RematchOverlay validation={validation} onGameCreate={onGameCreate} /> */}
@@ -36,11 +34,12 @@ function TicTacToeBoard() {
                             <BoardCell key={`${cIdx}_${rIdx}`}
                                 onCellClick={onCellClick(cIdx, rIdx)}
                                 cellValue={board[cIdx][rIdx] ?? " "}
-                                winHighlight={isHighlighted(rIdx, cIdx)} />
+                                winHighlight={isHighlighted(rIdx, cIdx)}
+                                 />
                         ))}
                     </div>)}
                 </div>
-                <div className="pt-6 px-6 w-96">
+                <div className="pt-6 px-6 w-96 text-center">
                     <GameId gameId={roomId ?? ""} />
                     <ConnectionStatus readyState={readyState} />
                     <Profiles players={players} currentPlayerId={currentPlayerId} />
