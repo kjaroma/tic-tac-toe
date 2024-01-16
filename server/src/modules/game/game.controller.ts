@@ -17,21 +17,22 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   const { sub: playerId, name } = authService.decodeAuthToken(token);
 
   const socket = Object.assign(connection.socket, { roomId: undefined });
-  socket.send(
+
+  const clients = req.server.websocketServer.clients
+  const broadcast = (message: string) => {
+    for(let client of clients) {
+      client.send(message)
+    }
+  }
+  
+const broadcastLobbyUpdate = () =>
+  broadcast(
     JSON.stringify({
       type: GameMessageType.LOBBY_UPDATE,
       payload: { rooms: lobbyService.getLobbyInfo() },
     }),
   );
-
-  const lobbyUpdateInterval = setInterval(() => {
-    socket.send(
-      JSON.stringify({
-        type: GameMessageType.LOBBY_UPDATE,
-        payload: { rooms: lobbyService.getLobbyInfo() },
-      }),
-    );
-  }, 5000);
+  broadcastLobbyUpdate()
 
   socket.on('message', (raw) => {
     const { log } = req;
@@ -58,6 +59,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
           payload: { roomId },
         }),
       );
+      broadcastLobbyUpdate()
     }
 
     function joinRoomHandler() {
@@ -101,6 +103,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
       if (isClosed) {
         gameService.deleteGame(roomId);
       }
+      broadcastLobbyUpdate()
     }
 
     function makeMoveHandler() {
@@ -180,7 +183,7 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
         joinRoomHandler();
         break;
 
-      case GameMessageType.LEAVE:
+      case GameMessageType.LEAVE_ROOM:
         leaveRoomHandler();
         break;
 
@@ -199,7 +202,6 @@ export async function playGame(connection: SocketStream, req: FastifyRequest) {
   });
 
   socket.on('close', () => {
-    clearInterval(lobbyUpdateInterval);
     const roomId = lobbyService.getRoomIdFromSocket(socket as unknown as WSRoom)
     const isClosed = lobbyService.leaveRoom(socket as unknown as WSRoom);
     if (isClosed) {

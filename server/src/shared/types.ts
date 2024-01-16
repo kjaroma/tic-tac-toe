@@ -22,15 +22,12 @@ export enum GameMessageType {
 
   //
   CREATE_ROOM = 'create_room',
-  ERROR = 'error',
-  FINISH = 'finish',
-  GAME_INVITATION = 'game_invitation',
-  INFO = 'info',
   JOIN_ROOM = 'join_room',
-  LEAVE = 'leave',
-  MOVE = 'move',
+  LEAVE_ROOM = 'leave_room',
   MAKE_MOVE = 'make_move',
   STATE_UPDATE = 'state_update',
+  ERROR = 'error',
+  INFO = 'info',
 }
 
 export enum GameValidationStatus {
