@@ -80,7 +80,7 @@ const GameProvider = ({ children }: PropsWithChildren) => {
             }
         }
 
-    }, [lastMessage, setGameState, error, warn, gameState])
+    }, [lastMessage, error, warn])
 
 
     const onMakeMove = (col: number, row: number) => (e: React.MouseEvent) => {
