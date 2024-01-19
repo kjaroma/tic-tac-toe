@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useEffect, useId, useState } from "react";
+import { PropsWithChildren, createContext, useEffect, useState } from "react";
 import { Board, GameMessage, GameMessageErrorPayload, GameMessageInfoPayload, GameMessageLobbyUpdate, GameMessageRoomCreatedPayload, GameMessageStateUpdatePayload, GameMessageType, GameState, GameValidationStatus } from "../shared/types";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Urls } from "../constants";

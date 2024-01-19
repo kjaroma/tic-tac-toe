@@ -5,7 +5,7 @@ import GameProvider from "../../providers/GameProvider";
 
 function Game() {
   return (
-    <div className="flex flex-col items-center p-12">
+    <div className="flex flex-col items-center p-12 w-full">
       <GameProvider>
         <GamePanel />
       </GameProvider>
@@ -16,7 +16,7 @@ function Game() {
 export default Game
 
 function GamePanel() {
-  const {roomId} = useGame()
+  const { roomId } = useGame()
   return (
     <>
       {

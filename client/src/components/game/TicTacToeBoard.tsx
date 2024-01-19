@@ -26,16 +26,17 @@ function TicTacToeBoard() {
         }
 
         return (
-            <div className="flex flex-col justify-center sm:flex-row bg-gray-5000 relative">
+            <div className={`flex flex-col justify-center sm:flex-row bg-gray-5000 relative`}>
                 {/* <RematchOverlay validation={validation} onGameCreate={onGameCreate} /> */}
                 <div className="flex flex-col justify-center items-center bg-gray-900 p-4 rounded-xl">
                     {board.map((row, rIdx) => <div key={rIdx} className="flex flex-row">
                         {row.map((_, cIdx) => (
-                            <BoardCell key={`${cIdx}_${rIdx}`}
+                            <BoardCell
+                                key={`${cIdx}_${rIdx}`}
                                 onCellClick={onCellClick(cIdx, rIdx)}
                                 cellValue={board[cIdx][rIdx] ?? " "}
                                 winHighlight={isHighlighted(rIdx, cIdx)}
-                                 />
+                            />
                         ))}
                     </div>)}
                 </div>
